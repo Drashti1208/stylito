@@ -344,39 +344,9 @@ button {
 .hero-section {
   position: relative;
   overflow: hidden;
-  padding: 40px 0 46px;
-  background: url('assets/images/hero_flatlay_bg.png') center center / cover no-repeat;
+  padding: 56px 0 64px;
+  background: url('assets/images/hero_hd_pink_bg.jpg') center center / cover no-repeat;
   color: #FFFFFF;
-}
-
-.hero-section::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at center, rgba(230, 110, 130, 0.22) 0%, rgba(215, 80, 105, 0.42) 100%);
-  pointer-events: none;
-  z-index: 1;
-}
-
-.hero-container-wrap {
-  position: relative;
-  z-index: 2;
-  perspective: 1200px;
-  -webkit-perspective: 1200px;
-}
-
-.hero-glass-card {
-  background: rgba(255, 255, 255, 0.22);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1.5px solid rgba(255, 255, 255, 0.55);
-  border-radius: 28px;
-  padding: 34px 40px;
-  box-shadow: 0 25px 55px -12px rgba(180, 45, 75, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.65);
-  transform-style: preserve-3d;
-  -webkit-transform-style: preserve-3d;
-  will-change: transform;
-  transition: box-shadow 0.3s ease;
 }
 
 .hero-grid {
@@ -385,13 +355,11 @@ button {
   gap: 36px;
   align-items: center;
   position: relative;
-  transform-style: preserve-3d;
 }
 
 .hero-content {
   padding-right: 16px;
   animation: heroFadeInLeft 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
-  transform-style: preserve-3d;
 }
 
 .hero-eyebrow {
@@ -2499,13 +2467,6 @@ button {
   /* Hero Section */
   .hero-section {
     padding: 26px 0 36px;
-  }
-
-  .hero-glass-card {
-    padding: 24px 18px;
-    border-radius: 20px;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
   }
 
   .hero-eyebrow {

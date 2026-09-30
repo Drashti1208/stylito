@@ -154,11 +154,11 @@
   const profileTriggerBtn = document.getElementById('profileTriggerBtn');
   const contactNavBtn = document.getElementById('contactNavBtn');
 
-  // 3D Parallax Mouse Tracking for Transparent Hero Glass Card
+  // 3D Parallax Mouse Tracking for Side Editorial Image
   function initHero3DParallax() {
     const heroSection = document.getElementById('heroInteractiveSection');
-    const heroCard = document.getElementById('heroMovableCard');
-    if (!heroSection || !heroCard) return;
+    const heroImage = document.querySelector('.hero-image-wrapper');
+    if (!heroSection || !heroImage) return;
 
     let targetRotX = 0;
     let targetRotY = 0;
@@ -181,7 +181,7 @@
       currentTransX = lerp(currentTransX, targetTransX, 0.08);
       currentTransY = lerp(currentTransY, targetTransY, 0.08);
 
-      heroCard.style.transform = `perspective(1200px) rotateX(${currentRotX.toFixed(2)}deg) rotateY(${currentRotY.toFixed(2)}deg) translate3d(${currentTransX.toFixed(1)}px, ${currentTransY.toFixed(1)}px, 15px)`;
+      heroImage.style.transform = `perspective(1000px) rotateX(${currentRotX.toFixed(2)}deg) rotateY(${currentRotY.toFixed(2)}deg) translate3d(${currentTransX.toFixed(1)}px, ${currentTransY.toFixed(1)}px, 12px)`;
 
       const isStationary =
         Math.abs(targetRotX - currentRotX) < 0.01 &&
@@ -192,7 +192,7 @@
       if (isHovering || !isStationary) {
         animFrameId = requestAnimationFrame(updateParallax);
       } else {
-        heroCard.style.transform = '';
+        heroImage.style.transform = '';
         animFrameId = null;
       }
     }
@@ -208,10 +208,10 @@
       const normY = (e.clientY - rect.top) / rect.height - 0.5; // -0.5 to 0.5
 
       // Smooth tilt and slight physical offset
-      targetRotY = normX * 12; // -6 to +6 degrees
-      targetRotX = -normY * 12; // tilt towards cursor
-      targetTransX = normX * 18; // -9px to +9px movement
-      targetTransY = normY * 14;
+      targetRotY = normX * 8; // -4 to +4 degrees
+      targetRotX = -normY * 8;
+      targetTransX = normX * 12;
+      targetTransY = normY * 10;
 
       if (!isHovering) {
         isHovering = true;
