@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { run, get } = require('../db/database');
+const { run, get, all } = require('../db/database');
 const { authenticateToken } = require('../middleware/auth');
 
 function generateToken(user) {
@@ -90,7 +90,19 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// 3. POST /api/auth/send-otp (Real OTP Generation without Firebase)
+// 2b. GET /api/auth/suggest-emails - Registered emails & details for auto-suggestions
+router.get('/suggest-emails', async (req, res) => {
+  try {
+    const users = await all(
+      `SELECT name, email, phone FROM users WHERE email != '' ORDER BY created_at DESC LIMIT 20`
+    );
+    res.json({ success: true, users });
+  } catch (err) {
+    res.json({ success: true, users: [] });
+  }
+});
+
+// 3. POST /api/auth/send-otp (Real OTP Generation & SMS Gateway Integration)
 router.post('/send-otp', async (req, res) => {
   try {
     const { contact } = req.body;
@@ -108,23 +120,52 @@ router.post('/send-otp', async (req, res) => {
     // Invalidate prior unused OTPs for this contact
     await run('UPDATE otps SET is_used = 1 WHERE contact = ?', [cleanedContact]);
 
-    // Save new OTP
+    // Save new OTP in SQLite
     await run(`
       INSERT INTO otps (id, contact, code, expires_at, is_used)
       VALUES (?, ?, ?, ?, 0)
     `, [id, cleanedContact, otpCode, expiresAt]);
 
     console.log(`===============================================`);
-    console.log(`🔐 REAL-TIME OTP DISPATCH (No Firebase)`);
+    console.log(`🔐 REAL-TIME OTP GENERATED IN SQLITE`);
     console.log(`   Destination: ${cleanedContact}`);
     console.log(`   OTP Code:    ${otpCode}`);
     console.log(`   Valid For:   10 Minutes`);
+
+    // Optional Real SMS Carrier Dispatch via Fast2SMS (Indian Mobile Carrier SMS)
+    let realSmsSent = false;
+    if (process.env.FAST2SMS_API_KEY) {
+      const rawDigits = cleanedContact.replace(/[^0-9]/g, '').slice(-10);
+      try {
+        const smsRes = await fetch('https://www.fast2sms.com/dev/bulkV2', {
+          method: 'POST',
+          headers: {
+            'authorization': process.env.FAST2SMS_API_KEY,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            route: 'otp',
+            variables_values: otpCode,
+            numbers: rawDigits
+          })
+        });
+        const smsData = await smsRes.json();
+        console.log(`📡 Real SMS Gateway Dispatch Response:`, smsData);
+        realSmsSent = smsData.return === true;
+      } catch (smsErr) {
+        console.warn('⚠️ Real SMS Gateway dispatch warning:', smsErr.message);
+      }
+    }
+
     console.log(`===============================================`);
 
     res.json({
       success: true,
-      message: `OTP sent successfully to ${cleanedContact}`,
-      otp: otpCode // Returned for easy testing during development
+      message: realSmsSent
+        ? `Real SMS OTP sent to your phone number ${cleanedContact}!`
+        : `OTP generated and sent to ${cleanedContact}`,
+      otp: otpCode,
+      realSmsSent
     });
   } catch (err) {
     console.error('Send OTP error:', err);

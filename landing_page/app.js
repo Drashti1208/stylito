@@ -969,12 +969,139 @@
 
     if (tab === 'signup') {
       if (flipCard) flipCard.classList.add('flipped');
-      if (flipViewport) flipViewport.style.minHeight = '535px';
+      if (flipViewport) flipViewport.style.minHeight = '465px';
     } else {
       if (flipCard) flipCard.classList.remove('flipped');
-      if (flipViewport) flipViewport.style.minHeight = '460px';
+      if (flipViewport) flipViewport.style.minHeight = '375px';
     }
   };
+
+  // ==========================================================================
+  // REAL-TIME EMAIL SUGGESTIONS & AUTO-FILL DETAILS (SIGN IN & SIGN UP)
+  // ==========================================================================
+  let cachedSuggestedUsers = [
+    { name: 'Drashti Patel', email: 'drashti@stylito.com', phone: '+91 98765 43210' },
+    { name: 'Drashti Patel', email: 'drashti1208@gmail.com', phone: '+91 98765 43210' },
+    { name: 'Priya Sharma', email: 'priya@gmail.com', phone: '+91 98250 12345' },
+    { name: 'Riya Patel', email: 'riya@gmail.com', phone: '+91 97123 45678' }
+  ];
+
+  async function loadRegisteredUsersForSuggestions() {
+    try {
+      const res = await fetch(`${AUTH_API_URL}/suggest-emails`);
+      const data = await res.json();
+      if (data.success && Array.isArray(data.users) && data.users.length > 0) {
+        const existingEmails = new Set(cachedSuggestedUsers.map(u => u.email.toLowerCase()));
+        data.users.forEach(u => {
+          if (!existingEmails.has(u.email.toLowerCase())) {
+            cachedSuggestedUsers.unshift(u);
+            existingEmails.add(u.email.toLowerCase());
+          }
+        });
+      }
+    } catch (_) {}
+  }
+  loadRegisteredUsersForSuggestions();
+
+  window.handleEmailFieldFocus = function (context) {
+    const input = document.getElementById(context === 'login' ? 'authLoginEmail' : 'authSignupEmail');
+    const menu = document.getElementById(context === 'login' ? 'loginEmailSuggestions' : 'signupEmailSuggestions');
+    if (!input || !menu) return;
+    renderEmailSuggestions(input.value.trim(), context, menu);
+  };
+
+  window.handleEmailFieldInput = function (context) {
+    const input = document.getElementById(context === 'login' ? 'authLoginEmail' : 'authSignupEmail');
+    const menu = document.getElementById(context === 'login' ? 'loginEmailSuggestions' : 'signupEmailSuggestions');
+    if (!input || !menu) return;
+    renderEmailSuggestions(input.value.trim(), context, menu);
+  };
+
+  function renderEmailSuggestions(query, context, menu) {
+    const cleanQ = (query || '').toLowerCase().trim();
+    let matches = [];
+
+    if (!cleanQ) {
+      matches = cachedSuggestedUsers.slice(0, 5);
+    } else {
+      matches = cachedSuggestedUsers.filter(u =>
+        u.email.toLowerCase().includes(cleanQ) || (u.name && u.name.toLowerCase().includes(cleanQ))
+      );
+
+      // If user typed without @, also suggest standard popular domains
+      if (!cleanQ.includes('@') && cleanQ.length >= 2) {
+        const domains = ['gmail.com', 'outlook.com', 'yahoo.com'];
+        domains.forEach(dom => {
+          const sugEmail = `${cleanQ}@${dom}`;
+          if (!matches.some(m => m.email.toLowerCase() === sugEmail.toLowerCase())) {
+            matches.push({ name: cleanQ, email: sugEmail, isDomainSug: true });
+          }
+        });
+      }
+    }
+
+    if (matches.length === 0) {
+      menu.style.display = 'none';
+      return;
+    }
+
+    menu.innerHTML = matches.map((item) => {
+      const initial = (item.name || item.email).charAt(0).toUpperCase();
+      const escapedEmail = item.email.replace(/'/g, "\\'");
+      const escapedName = (item.name || '').replace(/'/g, "\\'");
+      const escapedPhone = (item.phone || '').replace(/'/g, "\\'");
+      return `
+        <div class="email-suggestion-item" onmousedown="selectEmailSuggestion('${escapedEmail}', '${escapedName}', '${escapedPhone}', '${context}')">
+          <div class="email-sug-left">
+            <div class="email-sug-avatar">${initial}</div>
+            <div class="email-sug-text">
+              <span class="email-sug-name">${item.name || 'User'}</span>
+              <span class="email-sug-email">${item.email}</span>
+            </div>
+          </div>
+          <span class="email-sug-tag">${item.isDomainSug ? 'Quick' : 'Customer'}</span>
+        </div>
+      `;
+    }).join('');
+
+    menu.style.display = 'block';
+  }
+
+  window.selectEmailSuggestion = function (email, name, phone, context) {
+    if (context === 'login') {
+      const emailInput = document.getElementById('authLoginEmail');
+      const passInput = document.getElementById('authLoginPassword');
+      if (emailInput) emailInput.value = email;
+      const menu = document.getElementById('loginEmailSuggestions');
+      if (menu) menu.style.display = 'none';
+      if (passInput) passInput.focus();
+    } else {
+      const emailInput = document.getElementById('authSignupEmail');
+      const nameInput = document.getElementById('authSignupName');
+      const phoneInput = document.getElementById('authSignupPhone');
+      const passInput = document.getElementById('authSignupPassword');
+
+      if (emailInput) emailInput.value = email;
+      if (nameInput && name && name !== email.split('@')[0]) nameInput.value = name;
+      if (phoneInput && phone) phoneInput.value = phone;
+
+      const menu = document.getElementById('signupEmailSuggestions');
+      if (menu) menu.style.display = 'none';
+
+      if (passInput) passInput.focus();
+      if (name) showToast(`✨ Selected ${name}. All details auto-filled!`);
+    }
+  };
+
+  // Close email suggestions when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.auth-input-group')) {
+      const loginMenu = document.getElementById('loginEmailSuggestions');
+      const signupMenu = document.getElementById('signupEmailSuggestions');
+      if (loginMenu) loginMenu.style.display = 'none';
+      if (signupMenu) signupMenu.style.display = 'none';
+    }
+  });
 
   window.togglePasswordVisibility = function (inputId, btn) {
     const input = document.getElementById(inputId);
