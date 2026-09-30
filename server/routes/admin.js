@@ -21,6 +21,26 @@ router.post('/clear/:tableName', async (req, res) => {
   }
 });
 
+// POST /admin/delete-row/:tableName/:id - Delete a specific row
+router.post('/delete-row/:tableName/:id', async (req, res) => {
+  const { tableName, id } = req.params;
+  if (!VALID_TABLES.includes(tableName)) {
+    return res.status(400).json({ success: false, message: 'Invalid table name' });
+  }
+
+  try {
+    const result = await run(`DELETE FROM ${tableName} WHERE id = ?`, [id]);
+    const isJson = req.xhr || req.headers['content-type']?.includes('application/json') || req.headers.accept?.includes('application/json');
+    if (isJson) {
+      return res.json({ success: true, message: `Row ${id} deleted successfully`, changes: result.changes });
+    }
+    res.redirect(`/admin?tab=${tableName}&deleted=1`);
+  } catch (err) {
+    console.error(`Error deleting row from ${tableName}:`, err);
+    res.status(500).json({ success: false, message: `Error deleting row: ${err.message}` });
+  }
+});
+
 // POST /admin/api/insert - Dynamically insert record into selected SQLite table
 router.post('/api/insert', async (req, res) => {
   try {
@@ -304,6 +324,16 @@ router.get('/', async (req, res) => {
          </div>`
       : '';
 
+    const deletedMessage = req.query.deleted
+      ? `<div class="mb-4 p-3.5 bg-rose-950/80 border border-rose-500/50 rounded-xl text-rose-300 text-xs font-semibold flex items-center justify-between shadow-lg shadow-rose-950/40">
+           <div class="flex items-center gap-2">
+             <span class="text-base">🗑️</span>
+             <span>Row successfully deleted from <strong>"${activeTab}"</strong> in SQLite database!</span>
+           </div>
+           <a href="/admin?tab=${activeTab}" class="text-rose-400 hover:underline">Dismiss</a>
+         </div>`
+      : '';
+
     const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -354,6 +384,7 @@ router.get('/', async (req, res) => {
 
     ${clearedMessage}
     ${addedMessage}
+    ${deletedMessage}
 
     <!-- Stats Cards / Table Tabs -->
     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 my-6">
@@ -428,13 +459,14 @@ router.get('/', async (req, res) => {
                       `<th class="p-3 font-semibold uppercase tracking-wider text-[11px] whitespace-nowrap bg-slate-950">${col}</th>`
                   )
                   .join('')}
+                <th class="p-3 font-semibold uppercase tracking-wider text-[11px] whitespace-nowrap bg-slate-950 text-center sticky right-0 z-20 border-l border-slate-800 shadow-[-5px_0_10px_rgba(0,0,0,0.5)]">Action</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-800/60">
               ${rows
                 .map(
                   (row) => `
-                <tr class="hover:bg-slate-800/40 transition">
+                <tr class="hover:bg-slate-800/40 transition group">
                   ${columns
                     .map((col) => {
                       const val = row[col];
@@ -452,6 +484,17 @@ router.get('/', async (req, res) => {
                       }">${displayVal}</td>`;
                     })
                     .join('')}
+                  <td class="p-2 whitespace-nowrap text-center sticky right-0 bg-slate-900 group-hover:bg-slate-800/95 border-l border-slate-800 shadow-[-5px_0_10px_rgba(0,0,0,0.3)] z-10">
+                    <button
+                      type="button"
+                      onclick="deleteSingleRow('${activeTab}', '${row.id}', this)"
+                      title="Delete this row"
+                      class="inline-flex items-center justify-center gap-1.5 px-2.5 py-1 rounded-lg bg-red-950/50 hover:bg-red-900 border border-red-800/70 hover:border-red-600 text-red-400 hover:text-red-200 text-xs font-medium transition active:scale-95 cursor-pointer shadow-sm"
+                    >
+                      <span>🗑️</span>
+                      <span class="hidden sm:inline">Delete</span>
+                    </button>
+                  </td>
                 </tr>
               `
                 )
@@ -824,6 +867,44 @@ router.get('/', async (req, res) => {
         errorBox.classList.remove('hidden');
         submitBtn.disabled = false;
         submitBtn.innerHTML = '<span>💾</span><span>Save to SQLite</span>';
+      }
+    }
+
+    async function deleteSingleRow(table, id, btn) {
+      if (!confirm('Are you sure you want to delete this row (' + id + ') from table "' + table + '"?')) {
+        return;
+      }
+
+      const row = btn.closest('tr');
+      btn.disabled = true;
+      btn.innerHTML = '<span>⏳</span>';
+
+      try {
+        const res = await fetch('/admin/delete-row/' + encodeURIComponent(table) + '/' + encodeURIComponent(id), {
+          method: 'POST',
+          headers: { 'Accept': 'application/json' }
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          row.style.transition = 'all 0.3s ease';
+          row.style.opacity = '0';
+          row.style.transform = 'translateX(20px)';
+          setTimeout(() => {
+            window.location.href = '/admin?tab=' + encodeURIComponent(table) + '&deleted=1';
+          }, 250);
+        } else {
+          alert('Error deleting row: ' + (data.message || 'Failed to delete row'));
+          btn.disabled = false;
+          btn.innerHTML = '<span>🗑️</span><span class="hidden sm:inline">Delete</span>';
+        }
+      } catch (err) {
+        // Fallback form submit
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/admin/delete-row/' + encodeURIComponent(table) + '/' + encodeURIComponent(id);
+        document.body.appendChild(form);
+        form.submit();
       }
     }
 
