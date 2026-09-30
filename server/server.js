@@ -8,6 +8,7 @@ const productRoutes = require('./routes/products');
 const categoryRoutes = require('./routes/categories');
 const orderRoutes = require('./routes/orders');
 const inquiryRoutes = require('./routes/inquiries');
+const adminRoutes = require('./routes/admin');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -89,6 +90,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/inquiries', inquiryRoutes);
+app.use('/admin', adminRoutes);
 
 // 404 handler
 app.use((req, res) => {

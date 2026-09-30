@@ -4,11 +4,8 @@ import 'controllers/app_bindings.dart';
 import 'core/routes/app_routes.dart';
 import 'core/theme/app_theme.dart';
 
-import 'services/hive_storage_service.dart';
-
-Future<void> main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  await HiveStorageService.init();
   runApp(const StylishApp());
 }
 

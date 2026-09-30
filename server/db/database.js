@@ -331,23 +331,6 @@ async function seedInitialData() {
         p.is_deal_of_the_day, p.is_trending, p.is_new_arrival, p.inventory_count
       ]);
     }
-    console.log(` Seeded ${sampleProducts.length} sample products into SQLite database.`);
-  }
-
-  // Seed sample initial inquiry
-  const inqCount = await get(`SELECT COUNT(*) as count FROM inquiries`);
-  if (inqCount.count === 0) {
-    await run(`
-      INSERT INTO inquiries (id, name, email, subject, message, status)
-      VALUES (?, ?, ?, ?, ?, ?)
-    `, [
-      'inq_welcome_001',
-      'Priya Sharma',
-      'priya.sharma@example.com',
-      'Styling Assistance - Order #STY-1029',
-      'Hello, I would like advice on matching footwear with the Women Printed Kurta for an upcoming event.',
-      'New'
-    ]);
   }
 }
 
