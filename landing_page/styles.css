@@ -348,8 +348,8 @@ button {
   min-height: 460px;
   max-height: 560px;
   height: clamp(460px, 36vw, 540px);
-  background: #ea7f89 url('assets/images/hero_flatlay_pink_outfit_hd.jpg') center center / cover no-repeat;
-  color: #FFFFFF;
+  background: #fad5db url('assets/images/hero_flatlay_pink_accessories_hd.jpg') center center / cover no-repeat;
+  color: #24141E;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -387,48 +387,49 @@ button {
   font-weight: 700;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: #FFFFFF;
-  background: rgba(255, 255, 255, 0.3);
+  color: #E0264A;
+  background: rgba(255, 255, 255, 0.88);
   padding: 6px 18px;
   border-radius: 30px;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   margin-bottom: 12px;
-  border: 1.5px solid rgba(255, 255, 255, 0.65);
-  box-shadow: 0 4px 16px rgba(180, 45, 75, 0.16);
+  border: 1.5px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 0 4px 16px rgba(224, 38, 74, 0.12);
   animation: heroBadgePulse 3.5s ease-in-out infinite;
 }
 
 .hero-title {
   font-family: var(--font-serif);
   font-size: clamp(2rem, 3.8vw, 3.2rem);
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.14;
   letter-spacing: -0.01em;
-  color: #FFFFFF;
+  color: #24141E;
   margin-bottom: 12px;
-  text-shadow: 0 4px 24px rgba(180, 40, 75, 0.35), 0 2px 6px rgba(0, 0, 0, 0.18);
+  text-shadow: 0 2px 14px rgba(255, 255, 255, 0.6);
 }
 
 .hero-subtitle {
   font-size: 0.95rem;
-  color: rgba(255, 255, 255, 0.98);
+  color: #4D3742;
+  font-weight: 500;
   line-height: 1.55;
   margin-bottom: 18px;
   max-width: 520px;
-  text-shadow: 0 2px 12px rgba(160, 40, 70, 0.3);
+  text-shadow: 0 1px 8px rgba(255, 255, 255, 0.5);
 }
 
 .hero-section .btn-primary {
-  background: #FFFFFF;
-  color: #F83758;
-  border: 2px solid #FFFFFF;
+  background: #F83758;
+  color: #FFFFFF;
+  border: 2px solid #F83758;
   font-weight: 700;
   letter-spacing: 0.12em;
   border-radius: 30px;
   padding: 11px 26px;
   font-size: 0.74rem;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 0 18px rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 24px rgba(248, 55, 88, 0.35);
   transition: all var(--transition-normal);
   display: inline-flex;
   align-items: center;
@@ -436,11 +437,11 @@ button {
 }
 
 .hero-section .btn-primary:hover {
-  background: linear-gradient(135deg, #FFA987, #F87189);
+  background: #24141E;
+  border-color: #24141E;
   color: #FFFFFF;
-  border-color: rgba(255, 255, 255, 0.6);
   transform: translateY(-3px) scale(1.03);
-  box-shadow: 0 14px 34px rgba(248, 55, 88, 0.45);
+  box-shadow: 0 12px 30px rgba(36, 20, 30, 0.35);
 }
 
 .btn {
