@@ -154,12 +154,92 @@
   const profileTriggerBtn = document.getElementById('profileTriggerBtn');
   const contactNavBtn = document.getElementById('contactNavBtn');
 
+  // 3D Parallax Mouse Tracking for Transparent Hero Glass Card
+  function initHero3DParallax() {
+    const heroSection = document.getElementById('heroInteractiveSection');
+    const heroCard = document.getElementById('heroMovableCard');
+    if (!heroSection || !heroCard) return;
+
+    let targetRotX = 0;
+    let targetRotY = 0;
+    let targetTransX = 0;
+    let targetTransY = 0;
+
+    let currentRotX = 0;
+    let currentRotY = 0;
+    let currentTransX = 0;
+    let currentTransY = 0;
+
+    let isHovering = false;
+    let animFrameId = null;
+
+    const lerp = (start, end, factor) => start + (end - start) * factor;
+
+    function updateParallax() {
+      currentRotX = lerp(currentRotX, targetRotX, 0.08);
+      currentRotY = lerp(currentRotY, targetRotY, 0.08);
+      currentTransX = lerp(currentTransX, targetTransX, 0.08);
+      currentTransY = lerp(currentTransY, targetTransY, 0.08);
+
+      heroCard.style.transform = `perspective(1200px) rotateX(${currentRotX.toFixed(2)}deg) rotateY(${currentRotY.toFixed(2)}deg) translate3d(${currentTransX.toFixed(1)}px, ${currentTransY.toFixed(1)}px, 15px)`;
+
+      const isStationary =
+        Math.abs(targetRotX - currentRotX) < 0.01 &&
+        Math.abs(targetRotY - currentRotY) < 0.01 &&
+        Math.abs(targetTransX - currentTransX) < 0.05 &&
+        Math.abs(targetTransY - currentTransY) < 0.05;
+
+      if (isHovering || !isStationary) {
+        animFrameId = requestAnimationFrame(updateParallax);
+      } else {
+        heroCard.style.transform = '';
+        animFrameId = null;
+      }
+    }
+
+    heroSection.addEventListener('mousemove', (e) => {
+      // Ignore on touch/small devices
+      if (window.innerWidth < 768 || ('ontouchstart' in window && !window.matchMedia('(pointer: fine)').matches)) {
+        return;
+      }
+
+      const rect = heroSection.getBoundingClientRect();
+      const normX = (e.clientX - rect.left) / rect.width - 0.5; // -0.5 to 0.5
+      const normY = (e.clientY - rect.top) / rect.height - 0.5; // -0.5 to 0.5
+
+      // Smooth tilt and slight physical offset
+      targetRotY = normX * 12; // -6 to +6 degrees
+      targetRotX = -normY * 12; // tilt towards cursor
+      targetTransX = normX * 18; // -9px to +9px movement
+      targetTransY = normY * 14;
+
+      if (!isHovering) {
+        isHovering = true;
+        if (!animFrameId) {
+          animFrameId = requestAnimationFrame(updateParallax);
+        }
+      }
+    });
+
+    heroSection.addEventListener('mouseleave', () => {
+      isHovering = false;
+      targetRotX = 0;
+      targetRotY = 0;
+      targetTransX = 0;
+      targetTransY = 0;
+      if (!animFrameId) {
+        animFrameId = requestAnimationFrame(updateParallax);
+      }
+    });
+  }
+
   // Initialization
   function init() {
     updateCartUI();
     updateWishlistUI();
     setupEventListeners();
     initAuthSession();
+    initHero3DParallax();
   }
 
   // Event Listeners Setup
