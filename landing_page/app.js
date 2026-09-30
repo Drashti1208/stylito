@@ -198,16 +198,76 @@
         openBottomDetails();
       });
     }
+    // Active navigation link switching (turns pink on select)
+    const primaryNavLinks = document.querySelectorAll('.primary-nav .nav-links a');
+    primaryNavLinks.forEach(link => {
+      link.addEventListener('click', function () {
+        primaryNavLinks.forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
     if (contactNavBtn) {
       contactNavBtn.addEventListener('click', (e) => {
         e.preventDefault();
+        primaryNavLinks.forEach(l => l.classList.remove('active'));
+        contactNavBtn.classList.add('active');
         openBottomDetails();
       });
     }
+
+    const mobileNavLinks = document.querySelectorAll('.mobile-nav-links a');
+    mobileNavLinks.forEach(link => {
+      link.addEventListener('click', function () {
+        mobileNavLinks.forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+        const href = this.getAttribute('href');
+        if (href) {
+          primaryNavLinks.forEach(pl => {
+            if (pl.getAttribute('href') === href) {
+              primaryNavLinks.forEach(item => item.classList.remove('active'));
+              pl.classList.add('active');
+            }
+          });
+        }
+      });
+    });
+
+    // Scroll spy for navigation sections
+    window.addEventListener('scroll', () => {
+      const bottomSheet = document.getElementById('bottomDetailsSheet');
+      if (bottomSheet && bottomSheet.classList.contains('active')) return;
+
+      const navSections = [
+        { id: 'new-arrivals', link: document.querySelector('.primary-nav a[href="#new-arrivals"]') },
+        { id: 'categories', link: document.querySelector('.primary-nav a[href="#categories"]') },
+        { id: 'sale', link: document.querySelector('.primary-nav a[href="#sale"]') },
+      ];
+
+      const trigger = window.scrollY + 160;
+      let matched = null;
+      for (let i = navSections.length - 1; i >= 0; i--) {
+        const sec = navSections[i];
+        const el = document.getElementById(sec.id);
+        if (el && el.offsetTop <= trigger) {
+          matched = sec;
+          break;
+        }
+      }
+      if (matched && matched.link) {
+        primaryNavLinks.forEach(l => l.classList.remove('active'));
+        matched.link.classList.add('active');
+      }
+    }, { passive: true });
+
     document.querySelectorAll('.open-bottom-contact').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
         closeMobileDrawer();
+        if (contactNavBtn) {
+          primaryNavLinks.forEach(l => l.classList.remove('active'));
+          contactNavBtn.classList.add('active');
+        }
         openBottomDetails();
       });
     });
@@ -493,6 +553,27 @@
     if (bottomDetailsBackdrop) bottomDetailsBackdrop.classList.remove('active');
     if (!mobileDrawer.classList.contains('active') && !cartDrawer.classList.contains('active')) {
       document.body.style.overflow = '';
+    }
+    const contactBtn = document.getElementById('contactNavBtn');
+    if (contactBtn) contactBtn.classList.remove('active');
+
+    const navSections = [
+      { id: 'new-arrivals', link: document.querySelector('.primary-nav a[href="#new-arrivals"]') },
+      { id: 'categories', link: document.querySelector('.primary-nav a[href="#categories"]') },
+      { id: 'sale', link: document.querySelector('.primary-nav a[href="#sale"]') },
+    ];
+    const trigger = window.scrollY + 160;
+    let matched = navSections[0];
+    for (let i = navSections.length - 1; i >= 0; i--) {
+      const el = document.getElementById(navSections[i].id);
+      if (el && el.offsetTop <= trigger) {
+        matched = navSections[i];
+        break;
+      }
+    }
+    if (matched && matched.link) {
+      document.querySelectorAll('.primary-nav .nav-links a').forEach(l => l.classList.remove('active'));
+      matched.link.classList.add('active');
     }
   }
 

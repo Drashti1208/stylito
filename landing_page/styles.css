@@ -151,6 +151,7 @@ button {
   color: var(--color-text-dark);
   position: relative;
   padding: 6px 0;
+  transition: color var(--transition-fast);
 }
 
 .nav-item a::after {
@@ -159,7 +160,7 @@ button {
   bottom: 0;
   left: 0;
   width: 0;
-  height: 1.5px;
+  height: 2px;
   background-color: var(--color-primary);
   transition: width var(--transition-fast);
 }
@@ -169,13 +170,15 @@ button {
   width: 100%;
 }
 
+.nav-item a:hover,
 .nav-item a.active {
   color: var(--color-primary);
+  font-weight: 700;
 }
 
-.nav-item.nav-sale a {
-  color: var(--color-primary);
-  font-weight: 700;
+.mobile-nav-links a.active {
+  color: var(--color-primary) !important;
+  font-weight: 700 !important;
 }
 
 /* Header Right Group: All nav links + Profile Logo on the right side */
