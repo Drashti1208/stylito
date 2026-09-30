@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stylish — Elevated Style. Everyday You.</title>
+  <meta name="description" content="Timeless pieces. Modern silhouettes. Designed to elevate your everyday. Explore new arrivals, dresses, tops, bottoms and luxury essentials." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="shortcut icon" href="favicon.ico" />
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="styles.css" />
+
+</head>
+<body>
+
+
+
+  <!-- =================================================
+       2. GLOBAL HEADER & NAVIGATION
+       ================================================= -->
+  <header class="site-header">
+    <div class="container nav-inner">
+      <!-- Mobile Hamburger Button -->
+      <button class="mobile-toggle" id="mobileMenuToggle" aria-label="Toggle Navigation Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <!-- Brand Logo (Left Side) -->
+      <a href="javascript:void(0)" class="brand-logo" id="brandLogoBtn" aria-label="Stylish" title="Stylish - Click for Store & Contact details">
+        <img src="assets/images/logo.png" alt="Stylish" class="brand-logo-img" />
+      </a>
+
+      <!-- Right Side Container: All Nav Names + Profile Logo -->
+      <div class="header-right-group">
+        <nav class="primary-nav" aria-label="Main Navigation">
+          <ul class="nav-links">
+            <li class="nav-item"><a href="#new-arrivals" class="active">NEW IN</a></li>
+            <li class="nav-item"><a href="#categories">CLOTHING</a></li>
+            <li class="nav-item"><a href="#featured-brands">BRAND</a></li>
+            <li class="nav-item nav-sale"><a href="#sale">SALE</a></li>
+            <li class="nav-item"><a href="javascript:void(0)" class="open-bottom-contact" id="contactNavBtn">CONTACT</a></li>
+          </ul>
+        </nav>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer Menu -->
+  <div class="mobile-nav-drawer" id="mobileDrawer">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <span class="brand-logo"><img src="assets/images/logo.png" alt="Stylish" class="brand-logo-img" style="height:32px;" /></span>
+      <button class="drawer-close" id="mobileDrawerClose" aria-label="Close menu">&times;</button>
+    </div>
+    <ul class="mobile-nav-links">
+      <li><a href="#new-arrivals">NEW IN</a></li>
+      <li><a href="#categories">CLOTHING</a></li>
+      <li><a href="#featured-brands">BRAND</a></li>
+      <li><a href="#sale" style="color:var(--color-primary); font-weight:700;">SALE</a></li>
+      <li><a href="javascript:void(0)" class="open-bottom-contact">CONTACT</a></li>
+      <li><a href="javascript:void(0)" class="open-bottom-contact" style="display:flex; align-items:center; gap:10px; color:var(--color-primary); font-weight:700; margin-top:4px;"><span style="width:26px; height:26px; border-radius:50%; background:linear-gradient(135deg, #FFA987, #F87189); display:inline-flex; align-items:center; justify-content:center; color:#fff; font-size:12px;">👤</span> PROFILE &amp; CONTACT DETAILS</a></li>
+      <li><hr style="border:none; border-top:1px solid var(--color-border); margin: 10px 0;" /></li>
+      <li><a href="about.html">ABOUT STYLISH</a></li>
+      <li><a href="privacy-policy.html">PRIVACY POLICY</a></li>
+      <li><a href="terms.html">TERMS OF SERVICE</a></li>
+    </ul>
+  </div>
+
+  <main>
+    <!-- =================================================
+         3. EDITORIAL HERO BANNER
+         ================================================= -->
+    <section class="hero-section">
+      <div class="container hero-grid">
+        <div class="hero-content">
+          <span class="hero-eyebrow">NEW SEASON COLLECTION</span>
+          <h1 class="hero-title">Elevated Style.<br />Everyday You.</h1>
+          <p class="hero-subtitle">Timeless pieces. Modern silhouettes. Designed to elevate your everyday.</p>
+          <div class="hero-actions-wrap">
+            <a href="#new-arrivals" class="btn btn-primary">
+              <span>SHOP NEW ARRIVALS</span>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:4px;"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </a>
+            <button type="button" class="btn-playstore-animated" onclick="openPlayStoreModal()">
+              <div class="playstore-icon-triangle"></div>
+              <div class="playstore-text">
+                <small>GET IT ON</small>
+                <strong>Google Play</strong>
+              </div>
+            </button>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="hero-image-wrapper">
+            <img 
+              src="assets/images/hero_fashion.png" 
+              alt="Stylish Elevated Style Editorial Collection"
+              loading="eager"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================
+         4. SHOP BY CATEGORY
+         ================================================= -->
+    <section class="categories-section" id="categories">
+      <div class="container">
+        <h2 class="section-heading">SHOP BY CATEGORY</h2>
+
+        <div class="category-grid">
+
+          <!-- Category 1: Dresses -->
+          <div class="category-card" onclick="filterProducts('Dresses')">
+            <div class="category-circle">
+              <img
+                src="assets/images/product_flare_dress.png"
+                alt="Dresses"
+                loading="lazy"
+                onerror="if(!this.dataset.retry){this.dataset.retry='1';this.src='landing_page/assets/images/product_flare_dress.png';}"
+              />
+            </div>
+            <span class="category-name">DRESSES</span>
+          </div>
+
+          <!-- Category 2: Tops -->
+          <div class="category-card" onclick="filterProducts('Tops')">
+            <div class="category-circle">
+              <img
+                src="assets/images/product_denim_dress.png"
+                alt="Tops"
+                loading="lazy"
+                onerror="if(!this.dataset.retry){this.dataset.retry='1';this.src='landing_page/assets/images/product_denim_dress.png';}"
+              />
+            </div>
+            <span class="category-name">TOPS</span>
+          </div>
+
+          <!-- Category 3: Bottoms -->
+          <div class="category-card" onclick="filterProducts('Bottoms')">
+            <div class="category-circle">
+              <img
+                src="https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=400&q=80"
+                alt="Bottoms"
+                loading="lazy"
+              />
+            </div>
+            <span class="category-name">BOTTOMS</span>
+          </div>
+
+          <!-- Category 4: Accessories -->
+          <div class="category-card" onclick="filterProducts('Accessories')">
+            <div class="category-circle">
+              <img
+                src="assets/images/product_camera.png"
+                alt="Accessories"
+                loading="lazy"
+                onerror="if(!this.dataset.retry){this.dataset.retry='1';this.src='landing_page/assets/images/product_camera.png';}"
+              />
+            </div>
+            <span class="category-name">ACCESSORIES</span>
+          </div>
+
+          <!-- Category 5: Outerwear -->
+          <div class="category-card" onclick="filterProducts('Outerwear')">
+            <div class="category-circle">
+              <img
+                src="assets/images/product_nike_shop.png"
+                alt="Outerwear"
+                loading="lazy"
+                onerror="if(!this.dataset.retry){this.dataset.retry='1';this.src='landing_page/assets/images/product_nike_shop.png';}"
+              />
+            </div>
+            <span class="category-name">OUTERWEAR</span>
+          </div>
+
+          <!-- Category 6: Sale -->
+          <div class="category-card" onclick="filterProducts('Sale')">
+            <div class="category-circle">
+              <img
+                src="assets/images/cat_mens.png"
+                alt="Sale"
+                loading="lazy"
+                onerror="if(!this.dataset.retry){this.dataset.retry='1';this.src='landing_page/assets/images/cat_mens.png';}"
+              />
+            </div>
+            <span class="category-name">SALE</span>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================
+         5. NEW ARRIVALS PRODUCT SECTION (HORIZONTAL CAROUSEL)
+         ================================================= -->
+    <section class="new-arrivals-section" id="new-arrivals">
+      <div class="container">
+        <div class="section-header-wrap">
+          <div>
+            <h2 class="section-heading">NEW ARRIVALS</h2>
+          </div>
+          <div class="carousel-nav-controls">
+            <button type="button" class="carousel-nav-btn" onclick="scrollProductsHorizontal(-1)" title="Previous Products" aria-label="Previous Products">&#8249;</button>
+            <button type="button" class="carousel-nav-btn" onclick="scrollProductsHorizontal(1)" title="Next Products" aria-label="Next Products">&#8250;</button>
+          </div>
+        </div>
+
+        <div class="products-horizontal-wrap">
+          <div class="products-track" id="productsTrack">
+
+            <!-- Product Card 1: Black Dress -->
+            <article class="product-card" data-id="prod-black-dress" data-category="Dresses" onclick="openProductDetails('prod-black-dress')">
+              <div class="product-image-container">
+                <img 
+                  src="assets/images/product_black_dress.png" 
+                  alt="Black Dress" 
+                  loading="lazy"
+                  onerror="if(!this.dataset.retry){this.dataset.retry='1';this.src='landing_page/assets/images/product_black_dress.png';}"
+                />
+                <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist('prod-black-dress', 'Black Dress', 2000, 'assets/images/product_black_dress.png', this)" title="Add to wishlist" aria-label="Add to wishlist">
+                  <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                </button>
+                <button class="quick-add-btn" onclick="event.stopPropagation(); addToCart('prod-black-dress', 'Black Dress', 2000, 'assets/images/product_black_dress.png')">Quick Add to Bag</button>
+              </div>
+              <div class="product-info">
+                <h3 class="product-title">Black Dress</h3>
+                <p class="product-subtitle">Solid Black Dress for Women, Sexy Chain Shorts Ladi...</p>
+                <div class="product-rating">
+                  <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+                  <span class="rating-val">4.5</span>
+                  <span class="review-count">(5,23,456)</span>
+                </div>
+                <div class="product-price-row">
+                  <span class="product-price">&#8377;2,000</span>
+                  <span class="product-price-orig">&#8377;3,500</span>
+                  <span class="product-discount-tag">43% OFF</span>
+                </div>
+              </div>
+            </article>
+
+            <!-- Product Card 2: Pink Embroidered Maxi -->
+            <article class="product-card" data-id="prod-pink-embroidered" data-category="Dresses" onclick="openProductDetails('prod-pink-embroidered')">
+              <div class="product-image-container">
+                <img 
+                  src="assets/images/product_pink_dress.png" 
+                  alt="Pink Embroidered Maxi" 
+                  loading="lazy"
+                  onerror="if(!this.dataset.retry){this.dataset.retry='1';this.src='landing_page/assets/images/product_pink_dress.png';}"
+                />
+                <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist('prod-pink-embroidered', 'Pink Embroidered Maxi', 1900, 'assets/images/product_pink_dress.png', this)" title="Add to wishlist" aria-label="Add to wishlist">
+                  <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                </button>
+                <button class="quick-add-btn" onclick="event.stopPropagation(); addToCart('prod-pink-embroidered', 'Pink Embroidered Maxi', 1900, 'assets/images/product_pink_dress.png')">Quick Add to Bag</button>
+              </div>
+              <div class="product-info">
+                <h3 class="product-title">Pink Embroidered Maxi</h3>
+                <p class="product-subtitle">EARTHEN Rose Pink Embroidered Tiered Max...</p>
+                <div class="product-rating">
+                  <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+                  <span class="rating-val">4.5</span>
+                  <span class="review-count">(45,678)</span>
+                </div>
+                <div class="product-price-row">
+                  <span class="product-price">&#8377;1,900</span>
+                  <span class="product-price-orig">&#8377;2,800</span>
+                  <span class="product-discount-tag">32% OFF</span>
+                </div>
+              </div>
+            </article>
+
+            <!-- Product Card 3: Flare Dress -->
+            <article class="product-card" data-id="prod-flare-dress" data-category="Dresses" onclick="openProductDetails('prod-flare-dress')">
+              <div class="product-image-container">
+                <img 
+                  src="assets/images/product_flare_dress.png" 
+                  alt="Flare Dress" 
+                  loading="lazy"
+                  onerror="if(!this.dataset.retry){this.dataset.retry='1';this.src='landing_page/assets/images/product_flare_dress.png';}"
+                />
+                <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist('prod-flare-dress', 'Flare Dress', 1990, 'assets/images/product_flare_dress.png', this)" title="Add to wishlist" aria-label="Add to wishlist">
+                  <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                </button>
+                <button class="quick-add-btn" onclick="event.stopPropagation(); addToCart('prod-flare-dress', 'Flare Dress', 1990, 'assets/images/product_flare_dress.png')">Quick Add to Bag</button>
+              </div>
+              <div class="product-info">
+                <h3 class="product-title">Flare Dress</h3>
+                <p class="product-subtitle">Antheaa Black &amp; Rust Orange Floral Print Tiered Midi F...</p>
+                <div class="product-rating">
+                  <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+                  <span class="rating-val">4.5</span>
+                  <span class="review-count">(3,35,566)</span>
+                </div>
+                <div class="product-price-row">
+                  <span class="product-price">&#8377;1,990</span>
+                  <span class="product-price-orig">&#8377;2,999</span>
+                  <span class="product-discount-tag">33% OFF</span>
+                </div>
+              </div>
+            </article>
+
+            <!-- Product Card 4: Denim Dress -->
+            <article class="product-card" data-id="prod-denim-dress" data-category="Dresses" onclick="openProductDetails('prod-denim-dress')">
+              <div class="product-image-container">
+                <img 
+                  src="assets/images/product_denim_dress.png" 
+                  alt="Denim Dress" 
+                  loading="lazy"
+                  onerror="if(!this.dataset.retry){this.dataset.retry='1';this.src='landing_page/assets/images/product_denim_dress.png';}"
+                />
+                <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist('prod-denim-dress', 'Denim Dress', 1499, 'assets/images/product_denim_dress.png', this)" title="Add to wishlist" aria-label="Add to wishlist">
+                  <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                </button>
+                <button class="quick-add-btn" onclick="event.stopPropagation(); addToCart('prod-denim-dress', 'Denim Dress', 1499, 'assets/images/product_denim_dress.png')">Quick Add to Bag</button>
+              </div>
+              <div class="product-info">
+                <h3 class="product-title">Denim Dress</h3>
+                <p class="product-subtitle">Blue cotton denim dress</p>
+                <div class="product-rating">
+                  <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+                  <span class="rating-val">4.6</span>
+                  <span class="review-count">(89,120)</span>
+                </div>
+                <div class="product-price-row">
+                  <span class="product-price">&#8377;1,499</span>
+                  <span class="product-price-orig">&#8377;2,499</span>
+                  <span class="product-discount-tag">40% OFF</span>
+                </div>
+              </div>
+            </article>
+
+            <!-- Product Card 5: 100% Cotton Fabric Shirt -->
+            <article class="product-card" data-id="prod-mens-starry" data-category="Tops" onclick="openProductDetails('prod-mens-starry')">
+              <div class="product-image-container">
+                <img 
+                  src="assets/images/product_mens_starry.png" 
+                  alt="100% Cotton Fabric Shirt" 
+                  loading="lazy"
+                  onerror="if(!this.dataset.retry){this.dataset.retry='1';this.src='landing_page/assets/images/product_mens_starry.png';}"
+                />
+                <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist('prod-mens-starry', '100% Cotton Fabric Shirt', 399, 'assets/images/product_mens_starry.png', this)" title="Add to wishlist" aria-label="Add to wishlist">
+                  <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                </button>
+                <button class="quick-add-btn" onclick="event.stopPropagation(); addToCart('prod-mens-starry', '100% Cotton Fabric Shirt', 399, 'assets/images/product_mens_starry.png')">Quick Add to Bag</button>
+              </div>
+              <div class="product-info">
+                <h3 class="product-title">100% Cotton Fabric</h3>
+                <p class="product-subtitle">Mens Starry Sky Printed Shirt 100% Cotton Fabric</p>
+                <div class="product-rating">
+                  <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+                  <span class="rating-val">4.5</span>
+                  <span class="review-count">(1,52,344)</span>
+                </div>
+                <div class="product-price-row">
+                  <span class="product-price">&#8377;399</span>
+                  <span class="product-price-orig">&#8377;799</span>
+                  <span class="product-discount-tag">50% OFF</span>
+                </div>
+              </div>
+            </article>
+
+            <!-- Product Card 6: Black Winter Overcoat -->
+            <article class="product-card" data-id="prod-black-winter" data-category="Outerwear" onclick="openProductDetails('prod-black-winter')">
+              <div class="product-image-container">
+                <img 
+                  src="assets/images/product_black_winter.png" 
+                  alt="Black Winter Overcoat" 
+                  loading="lazy"
+                  onerror="if(!this.dataset.retry){this.dataset.retry='1';this.src='landing_page/assets/images/product_black_winter.png';}"
+                />
+                <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist('prod-black-winter', 'Black Winter Overcoat', 2499, 'assets/images/product_black_winter.png', this)" title="Add to wishlist" aria-label="Add to wishlist">
+                  <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                </button>
+                <button class="quick-add-btn" onclick="event.stopPropagation(); addToCart('prod-black-winter', 'Black Winter Overcoat', 2499, 'assets/images/product_black_winter.png')">Quick Add to Bag</button>
+              </div>
+              <div class="product-info">
+                <h3 class="product-title">Black Winter Overcoat</h3>
+                <p class="product-subtitle">Autumn And Winter Casual cotton-padded jacket...</p>
+                <div class="product-rating">
+                  <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+                  <span class="rating-val">4.7</span>
+                  <span class="review-count">(68,900)</span>
+                </div>
+                <div class="product-price-row">
+                  <span class="product-price">&#8377;2,499</span>
+                  <span class="product-price-orig">&#8377;4,999</span>
+                  <span class="product-discount-tag">50% OFF</span>
+                </div>
+              </div>
+            </article>
+
+            <!-- Product Card 7: Leather Biker Jacket -->
+            <article class="product-card" data-id="prod-leather-jacket" data-category="Outerwear" onclick="openProductDetails('prod-leather-jacket')">
+              <div class="product-image-container">
+                <img 
+                  src="assets/images/product_leather_jacket.png" 
+                  alt="Leather Biker Jacket" 
+                  loading="lazy"
+                  onerror="if(!this.dataset.retry){this.dataset.retry='1';this.src='landing_page/assets/images/product_leather_jacket.png';}"
+                />
+                <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist('prod-leather-jacket', 'Leather Biker Jacket', 2999, 'assets/images/product_leather_jacket.png', this)" title="Add to wishlist" aria-label="Add to wishlist">
+                  <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                </button>
+                <button class="quick-add-btn" onclick="event.stopPropagation(); addToCart('prod-leather-jacket', 'Leather Biker Jacket', 2999, 'assets/images/product_leather_jacket.png')">Quick Add to Bag</button>
+              </div>
+              <div class="product-info">
+                <h3 class="product-title">Leather Biker Jacket</h3>
+                <p class="product-subtitle">Premium Slim-Fit Faux Leather Jacket with Metal Zips</p>
+                <div class="product-rating">
+                  <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+                  <span class="rating-val">4.8</span>
+                  <span class="review-count">(1,12,400)</span>
+                </div>
+                <div class="product-price-row">
+                  <span class="product-price">&#8377;2,999</span>
+                  <span class="product-price-orig">&#8377;5,999</span>
+                  <span class="product-discount-tag">50% OFF</span>
+                </div>
+              </div>
+            </article>
+
+            <!-- Product Card 8: HRX Sports Sneakers -->
+            <article class="product-card" data-id="prod-hrx-sneakers" data-category="Accessories" onclick="openProductDetails('prod-hrx-sneakers')">
+              <div class="product-image-container">
+                <img 
+                  src="assets/images/product_hrx.png" 
+                  alt="HRX Sports Sneakers" 
+                  loading="lazy"
+                  onerror="if(!this.dataset.retry){this.dataset.retry='1';this.src='landing_page/assets/images/product_hrx.png';}"
+                />
+                <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist('prod-hrx-sneakers', 'HRX Sports Sneakers', 2499, 'assets/images/product_hrx.png', this)" title="Add to wishlist" aria-label="Add to wishlist">
+                  <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                </button>
+                <button class="quick-add-btn" onclick="event.stopPropagation(); addToCart('prod-hrx-sneakers', 'HRX Sports Sneakers', 2499, 'assets/images/product_hrx.png')">Quick Add to Bag</button>
+              </div>
+              <div class="product-info">
+                <h3 class="product-title">HRX Sports Sneakers</h3>
+                <p class="product-subtitle">Court-ready lightweight sneakers designed for active running</p>
+                <div class="product-rating">
+                  <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+                  <span class="rating-val">4.8</span>
+                  <span class="review-count">(3,44,567)</span>
+                </div>
+                <div class="product-price-row">
+                  <span class="product-price">&#8377;2,499</span>
+                  <span class="product-price-orig">&#8377;4,999</span>
+                  <span class="product-discount-tag">50% OFF</span>
+                </div>
+              </div>
+            </article>
+
+          </div>
+        </div>
+
+        <div class="section-footer-cta">
+          <button class="btn btn-outline" onclick="showAllProducts()">VIEW ALL PRODUCTS</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================
+         6. VALUE PROPOSITIONS & TRUST STRIP
+         ================================================= -->
+    <section class="trust-strip">
+      <div class="container">
+        <div class="trust-grid">
+          <!-- Item 1: Free Shipping -->
+          <div class="trust-item trust-item-shipping">
+            <div class="trust-icon">
+              <svg viewBox="0 0 24 24">
+                <rect x="1" y="3" width="15" height="13"></rect>
+                <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                <circle cx="18.5" cy="18.5" r="2.5"></circle>
+              </svg>
+            </div>
+            <div class="trust-text">
+              <h4>Free Shipping</h4>
+              <p>On all orders over &#8377;999</p>
+            </div>
+          </div>
+
+          <!-- Item 2: Easy Returns -->
+          <div class="trust-item trust-item-returns">
+            <div class="trust-icon">
+              <svg viewBox="0 0 24 24">
+                <polyline points="1 4 1 10 7 10"></polyline>
+                <polyline points="23 20 23 14 17 14"></polyline>
+                <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
+              </svg>
+            </div>
+            <div class="trust-text">
+              <h4>Easy Returns</h4>
+              <p>30 days return policy</p>
+            </div>
+          </div>
+
+          <!-- Item 3: Secure Payment -->
+          <div class="trust-item trust-item-payment">
+            <div class="trust-icon">
+              <svg viewBox="0 0 24 24">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+            </div>
+            <div class="trust-text">
+              <h4>Secure Payment</h4>
+              <p>100% verified checkout</p>
+            </div>
+          </div>
+
+          <!-- Item 4: Quality Guarantee -->
+          <div class="trust-item trust-item-quality">
+            <div class="trust-icon">
+              <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="8" r="6"></circle>
+                <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+              </svg>
+            </div>
+            <div class="trust-text">
+              <h4>Quality Guarantee</h4>
+              <p>Premium certified fabrics</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================
+         7. PROMOTIONAL SPLIT BANNER (Summer Refresh)
+         ================================================= -->
+    <section class="promo-banner-section" id="sale">
+      <div class="container">
+        <div class="promo-banner-card">
+          <div class="promo-visual">
+            <img 
+              src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1000&q=80" 
+              alt="Velora Summer Refresh Collection Promotion" 
+            />
+          </div>
+          <div class="promo-content">
+            <span class="promo-tag">LIMITED TIME ONLY</span>
+            <h2 class="promo-title">Summer Refresh</h2>
+            <p class="promo-desc">Enjoy up to 30% off selected styles.</p>
+            <button class="btn btn-primary" onclick="filterProducts('Sale')">SHOP THE SALE</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================
+         8. INSTAGRAM / SOCIAL COMMUNITY (#STYLISHSTYLE)
+         ================================================= -->
+    <section class="social-community-section">
+      <div class="container">
+        <div class="social-header">
+          <h2 class="social-title">#STYLISHSTYLE</h2>
+          <p class="social-subtitle">Tag @stylish_official to be featured.</p>
+        </div>
+
+        <div class="social-grid">
+          <div class="social-tile">
+            <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=600&q=80" alt="Velora Community Look 1" />
+            <div class="social-overlay"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></div>
+          </div>
+          <div class="social-tile">
+            <img src="https://images.unsplash.com/photo-1485968579580-b6d095142e6e?auto=format&fit=crop&w=600&q=80" alt="Velora Community Look 2" />
+            <div class="social-overlay"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></div>
+          </div>
+          <div class="social-tile">
+            <img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&w=600&q=80" alt="Velora Community Look 3" />
+            <div class="social-overlay"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></div>
+          </div>
+          <div class="social-tile">
+            <img src="https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?auto=format&fit=crop&w=600&q=80" alt="Velora Community Look 4" />
+            <div class="social-overlay"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></div>
+          </div>
+          <div class="social-tile">
+            <img src="https://images.unsplash.com/photo-1479064555552-3ef4979f8908?auto=format&fit=crop&w=600&q=80" alt="Velora Community Look 5" />
+            <div class="social-overlay"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></div>
+          </div>
+          <div class="social-tile">
+            <img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=600&q=80" alt="Velora Community Look 6" />
+            <div class="social-overlay"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================
+         9. NEWSLETTER (Stay in the Know)
+         ================================================= -->
+    <section class="newsletter-section">
+      <div class="container">
+        <div class="newsletter-card">
+          <div class="newsletter-left">
+            <div class="newsletter-icon">
+              <svg viewBox="0 0 24 24">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+            </div>
+            <div>
+              <h3 class="newsletter-title">STAY IN THE KNOW</h3>
+              <p class="newsletter-subtext">Subscribe to get special offers, free giveaways, and once-in-a-lifetime deals.</p>
+            </div>
+          </div>
+
+          <form class="newsletter-form" id="newsletterForm" onsubmit="handleNewsletterSubmit(event)">
+            <input 
+              type="email" 
+              class="newsletter-input" 
+              id="newsletterEmail" 
+              placeholder="Enter your email" 
+              required 
+            />
+            <button type="submit" class="newsletter-btn">SUBSCRIBE</button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- =================================================
+       10. SITE FOOTER
+       ================================================= -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-top">
+        <!-- Brand Description & Socials -->
+        <div class="footer-brand">
+          <a href="index.html" class="brand-logo" aria-label="Stylish">
+            <img src="assets/images/logo.png" alt="Stylish" class="brand-logo-img" />
+          </a>
+          <p class="footer-brand-desc">Timeless style meets modern elegance. Designed for every moment of life.</p>
+          <div class="footer-socials">
+            <a href="https://instagram.com" class="social-icon-link" aria-label="Instagram" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+            </a>
+            <a href="https://facebook.com" class="social-icon-link" aria-label="Facebook" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+            </a>
+            <a href="https://pinterest.com" class="social-icon-link" aria-label="Pinterest" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738.098.119.112.224.083.345-.09.376-.291 1.187-.33 1.353-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.631-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12 0-6.627-5.373-12-12-12z"/></svg>
+            </a>
+            <a href="https://tiktok.com" class="social-icon-link" aria-label="TikTok" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24"><path d="M12.525.02c1.31 0 2.6.08 3.86.24v4.45c-.88-.13-1.77-.18-2.67-.14-.24 2.86-.33 5.72-.25 8.58.07 1.83.6 3.65 1.57 5.2 1.37 2.2 3.68 3.75 6.27 4.21v4.44c-3.69-.37-7.07-2.07-9.45-4.78-2.06-2.34-3.23-5.38-3.32-8.52V.02h4z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Shop Column -->
+        <div class="footer-col">
+          <h4 class="footer-col-title">SHOP</h4>
+          <ul class="footer-links">
+            <li><a href="#new-arrivals">New In</a></li>
+            <li><a href="#categories">Clothing</a></li>
+            <li><a href="#categories">Dresses</a></li>
+            <li><a href="#categories">Tops</a></li>
+            <li><a href="#categories">Bottoms</a></li>
+            <li><a href="#categories">Accessories</a></li>
+            <li><a href="#sale">Sale</a></li>
+          </ul>
+        </div>
+
+        <!-- Customer Care Column -->
+        <div class="footer-col">
+          <h4 class="footer-col-title">CUSTOMER CARE</h4>
+          <ul class="footer-links">
+            <li><a href="terms.html">Shipping & Delivery</a></li>
+            <li><a href="terms.html">Returns</a></li>
+            <li><a href="about.html">Size Guide</a></li>
+            <li><a href="about.html">FAQ</a></li>
+            <li><a href="about.html#contact">Contact Us</a></li>
+          </ul>
+        </div>
+
+        <!-- About Column -->
+        <div class="footer-col">
+          <h4 class="footer-col-title">ABOUT</h4>
+          <ul class="footer-links">
+            <li><a href="about.html">Our Story</a></li>
+            <li><a href="about.html#sustainability">Sustainability</a></li>
+            <li><a href="about.html#careers">Careers</a></li>
+            <li><a href="about.html#lookbook">Lookbook</a></li>
+            <li><a href="about.html#blog">Blog</a></li>
+          </ul>
+        </div>
+
+        <!-- Legal Column -->
+        <div class="footer-col">
+          <h4 class="footer-col-title">LEGAL</h4>
+          <ul class="footer-links">
+            <li><a href="terms.html">Terms & Conditions</a></li>
+            <li><a href="privacy-policy.html">Privacy Policy</a></li>
+            <li><a href="terms.html#refund">Refund Policy</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Bottom Bar -->
+      <div class="footer-bottom">
+        <p class="copyright-text">&copy; 2026 Stylish. All Rights Reserved.</p>
+        <div class="payment-badges">
+          <span class="payment-badge">VISA</span>
+          <span class="payment-badge">MC</span>
+          <span class="payment-badge">AMEX</span>
+          <span class="payment-badge">PAYPAL</span>
+          <span class="payment-badge">APPLE PAY</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- =================================================
+       SLIDE-OUT SHOPPING BAG (CART DRAWER)
+       ================================================= -->
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+  <aside class="cart-drawer" id="cartDrawer" aria-label="Shopping Bag">
+    <div class="drawer-header">
+      <h3 class="drawer-title">SHOPPING BAG (<span id="drawerCartCount">0</span>)</h3>
+      <button class="drawer-close" id="cartDrawerClose" aria-label="Close Shopping Bag">&times;</button>
+    </div>
+
+    <div class="cart-items-container" id="cartItemsContainer">
+      <div class="empty-cart-message">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <path d="M16 10a4 4 0 0 1-8 0"></path>
+        </svg>
+        <p>Your shopping bag is currently empty.</p>
+      </div>
+    </div>
+
+    <div class="drawer-footer">
+      <div class="cart-subtotal-row">
+        <span>SUBTOTAL</span>
+        <span id="cartSubtotal">.00</span>
+      </div>
+      <button class="btn btn-primary checkout-btn" onclick="proceedToCheckout()">CHECKOUT</button>
+    </div>
+  </aside>
+
+  <!-- =================================================
+       SEARCH MODAL
+       ================================================= -->
+  <div class="search-modal" id="searchModal">
+    <div class="search-inner">
+      <div class="search-input-wrap">
+        <input type="text" class="search-input" id="globalSearchInput" placeholder="Search dresses, blazers, tops..." oninput="handleSearch(this.value)" />
+        <button class="search-close-btn" id="searchModalClose" aria-label="Close search">&times;</button>
+      </div>
+      <div class="search-results-preview" id="searchResultsPreview"></div>
+    </div>
+  </div>
+
+  <!-- =================================================
+       TOAST NOTIFICATION
+       ================================================= -->
+  <!-- =================================================
+       BOTTOM DETAILS / CONTACT US SHEET
+       ================================================= -->
+  <div class="bottom-details-backdrop" id="bottomDetailsBackdrop"></div>
+  <aside class="bottom-details-sheet" id="bottomDetailsSheet" aria-label="Contact and Store Details">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <div>
+        <h3 class="sheet-title">STYLISH &bull; CONTACT US &amp; STORE DETAILS</h3>
+        <p class="sheet-subtitle">Get in touch with our customer assistance team or visit our flagship studio</p>
+      </div>
+      <button class="sheet-close-btn" id="bottomDetailsClose" aria-label="Close details">&times;</button>
+    </div>
+
+    <div class="sheet-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; align-items: start;">
+      
+      <!-- LEFT: Clean Account Access Box -->
+      <div class="sheet-auth-card" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:16px;">
+        <h4 style="font-size:0.85rem; font-weight:700; color:#1e293b; margin-bottom:3px; letter-spacing:0.04em;">ACCOUNT ACCESS</h4>
+        <p style="font-size:0.75rem; color:#64748b; margin-bottom:12px;">Sign in to view orders, wishlist &amp; faster checkout</p>
+        
+        <div id="sheetAuthLoggedOut">
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <button type="button" class="btn-quick-google" onclick="openGoogleAccountPicker()" style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:9px 12px; border:1px solid #cbd5e1; border-radius:8px; background:#fff; font-size:0.80rem; font-weight:600; color:#1e293b; cursor:pointer;">
+              <svg viewBox="0 0 24 24" width="16" height="16">
+                <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+                <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/>
+                <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 10.03 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+                <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+              </svg>
+              <span>Continue with Google</span>
+            </button>
+            <button type="button" class="btn-quick-phone" onclick="openPhoneOtpModal()" style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:9px 12px; border:1px solid #cbd5e1; border-radius:8px; background:#fff; font-size:0.80rem; font-weight:600; color:#1e293b; cursor:pointer;">
+              <span style="font-size:13px;">📱</span>
+              <span>Login with Phone Number</span>
+            </button>
+          </div>
+        </div>
+        <div id="sheetUserStatus" class="sheet-user-status" style="display:none; margin-top:8px;"></div>
+        
+        <div style="margin-top:14px; padding-top:10px; border-top:1px solid #e2e8f0; font-size:0.73rem; color:#64748b; line-height:1.6;">
+          <div>📍 Ahmedabad, Gujarat &bull; 9 AM &ndash; 8 PM</div>
+          <div>📞 <a href="tel:+919876543210" style="color:#0f172a; font-weight:600;">+91 98765 43210</a> &bull; <a href="mailto:support@stylishfashion.com" style="color:#0f172a;">support@stylishfashion.com</a></div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Compact Direct Message Form -->
+      <div class="sheet-form-card" style="padding:16px; border:1px solid #e2e8f0; border-radius:12px; background:#fff;">
+        <h4 style="font-size:0.85rem; font-weight:700; color:#1e293b; margin-bottom:3px;">NEED ASSISTANCE?</h4>
+        <p style="font-size:0.75rem; color:#64748b; margin-bottom:10px;">Send a message to our stylist &amp; support team</p>
+        <form id="bottomContactForm" onsubmit="handleBottomContactSubmit(event)">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px;">
+            <input type="text" class="sheet-form-input" id="bottomContactName" placeholder="Your Name" style="padding:7px 10px; font-size:0.78rem;" required />
+            <input type="email" class="sheet-form-input" id="bottomContactEmail" placeholder="Your Email" style="padding:7px 10px; font-size:0.78rem;" required />
+          </div>
+          <div class="sheet-form-group" style="margin-bottom:8px;">
+            <input type="text" class="sheet-form-input" id="bottomContactSubject" placeholder="Subject (Optional)" style="padding:7px 10px; font-size:0.78rem;" />
+          </div>
+          <div class="sheet-form-group" style="margin-bottom:10px;">
+            <textarea class="sheet-form-textarea" id="bottomContactMessage" placeholder="How can our stylists help you?" style="padding:7px 10px; font-size:0.78rem; min-height:54px;" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%; border-radius:6px; padding:9px; font-size:0.78rem; font-weight:600;">SEND MESSAGE</button>
+        </form>
+      </div>
+
+    </div>
+  </aside>
+
+  <!-- =================================================
+       12. PRODUCT DETAILS QUICK-VIEW MODAL
+       ================================================= -->
+  <div class="product-modal-backdrop" id="productModalBackdrop"></div>
+  <aside class="product-details-modal" id="productDetailsModal" role="dialog" aria-modal="true" aria-label="Product Details Quick View">
+    <button type="button" class="product-modal-close" id="productModalClose" aria-label="Close details">&times;</button>
+    <div class="product-modal-inner">
+      <div class="product-modal-gallery">
+        <div class="product-modal-img-wrap">
+          <img id="modalProductImage" src="assets/images/product_black_dress.png" alt="Product Preview" onerror="if(!this.dataset.retry){this.dataset.retry='1';this.src='landing_page/assets/images/product_black_dress.png';}" />
+        </div>
+      </div>
+      <div class="product-modal-content">
+        <span class="modal-product-cat" id="modalProductCategory">DRESSES</span>
+        <h3 class="modal-product-title" id="modalProductTitle">Product Name</h3>
+        <p class="modal-product-subtitle" id="modalProductSubtitle">Subtitle details</p>
+
+        <div class="modal-product-rating">
+          <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+          <span class="score" id="modalProductRatingScore">4.5</span>
+          <span class="reviews" id="modalProductReviews">(50,000+ ratings)</span>
+        </div>
+
+        <div class="modal-price-row">
+          <span class="modal-price-current" id="modalProductPrice">&#8377;2,000</span>
+          <span class="modal-price-orig" id="modalProductOrigPrice">&#8377;3,500</span>
+          <span class="modal-discount-tag" id="modalProductDiscount">43% OFF</span>
+        </div>
+
+        <div class="modal-sizes-wrap">
+          <div class="modal-sizes-label">Select Size</div>
+          <div class="modal-sizes-list" id="modalProductSizes">
+            <button type="button" class="size-chip active" onclick="selectSize(this)">S</button>
+            <button type="button" class="size-chip" onclick="selectSize(this)">M</button>
+            <button type="button" class="size-chip" onclick="selectSize(this)">L</button>
+            <button type="button" class="size-chip" onclick="selectSize(this)">XL</button>
+          </div>
+        </div>
+
+        <div class="modal-description" id="modalProductDescription">
+          Detailed product description.
+        </div>
+
+        <div class="modal-actions-row">
+          <button type="button" class="btn-add-bag" onclick="addModalProductToBag()">Add to Bag</button>
+          <button type="button" class="btn-buy-now" onclick="buyModalProductNow()">Buy Now</button>
+          <button type="button" class="btn-modal-wishlist" onclick="toggleModalProductWishlist(this)" title="Save to Wishlist" aria-label="Save to Wishlist">
+            <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+
+
+  <!-- =================================================
+       15. GOOGLE PLAY STORE DOWNLOAD MODAL
+       ================================================= -->
+  <div class="playstore-backdrop" id="playStoreBackdrop" onclick="closePlayStoreModal()"></div>
+  <aside class="playstore-modal" id="playStoreModal" role="dialog" aria-modal="true" aria-label="Google Play Store Download">
+    <div class="playstore-inner">
+      <button type="button" class="playstore-modal-close" onclick="closePlayStoreModal()" aria-label="Close">&times;</button>
+      
+      <!-- Play Store Top Bar -->
+      <div class="playstore-topbar">
+        <svg viewBox="0 0 24 24" width="22" height="22">
+          <path fill="#4285F4" d="M3.6 1.8l11.4 10.2L3.6 22.2c-.3-.3-.6-.8-.6-1.4V3.2c0-.6.3-1.1.6-1.4z"/>
+          <path fill="#34A853" d="M18.7 15.6l-3.7-3.6 3.7-3.6 4.3 2.5c1.2.7 1.2 1.9 0 2.6l-4.3 2.1z"/>
+          <path fill="#EA4335" d="M3.6 1.8l11.4 10.2 3.7-3.6L5.3 1.1C4.6.7 4 1 3.6 1.8z"/>
+          <path fill="#FBBC05" d="M15 12l-11.4 10.2c.4.8 1 1.1 1.7.7l13.4-7.3-3.7-3.6z"/>
+        </svg>
+        <span class="playstore-google-text">Google Play</span>
+        <span class="play-protect-pill">🛡️ Play Protect Verified</span>
+      </div>
+
+      <!-- App Header Info -->
+      <div class="play-app-header">
+        <div class="play-app-icon-wrap">
+          <img src="assets/images/logo.png" alt="Stylito App" class="play-app-icon" onerror="if(!this.dataset.retry){this.dataset.retry='1';this.src='landing_page/assets/images/logo.png';}" />
+        </div>
+        <div class="play-app-title-group">
+          <h2 class="play-app-name">Stylito: Fashion &amp; Shoes</h2>
+          <p class="play-app-developer">Stylito India Retail Pvt Ltd</p>
+          <span class="play-app-tag">In-app purchases • Editors' Choice</span>
+        </div>
+      </div>
+
+      <!-- Play Store App Stats -->
+      <div class="play-app-stats">
+        <div class="stat-col">
+          <div class="stat-val">4.8 ★</div>
+          <div class="stat-sub">124K reviews</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-col">
+          <div class="stat-val">24 MB</div>
+          <div class="stat-sub">Download size</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-col">
+          <div class="stat-val">100K+</div>
+          <div class="stat-sub">Downloads</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-col">
+          <div class="stat-val">Rated 3+</div>
+          <div class="stat-sub">Safe for all</div>
+        </div>
+      </div>
+
+      <!-- Install / Download Action Section -->
+      <div class="play-install-section">
+        <button type="button" class="btn-play-install" id="btnPlayInstall" onclick="startPlayStoreDownload()">
+          <span id="playInstallBtnText">Install (24 MB)</span>
+        </button>
+
+        <div class="play-download-progress" id="playDownloadProgress" style="display:none;">
+          <div class="progress-info-row">
+            <span id="playProgressStatus">Downloading Stylito...</span>
+            <span id="playProgressPercent">0%</span>
+          </div>
+          <div class="progress-bar-track">
+            <div class="progress-bar-fill" id="playProgressBarFill" style="width: 0%;"></div>
+          </div>
+          <div class="progress-detail-row">
+            <span id="playProgressMb">0.0 MB / 24.0 MB</span>
+            <span>Speed: ~4.2 MB/s</span>
+          </div>
+        </div>
+
+        <button type="button" class="btn-play-open" id="btnPlayOpen" style="display:none;" onclick="openInstalledApp()">
+          <span>✓ Open App</span>
+        </button>
+      </div>
+
+      <!-- Screenshots Preview Cards -->
+      <div class="play-screenshots-title">App Highlights &amp; Features</div>
+      <div class="play-screenshots-row">
+        <div class="screen-card">
+          <span class="screen-card-emoji">👗</span>
+          <strong>10,000+ Trends</strong>
+          <small>Dresses, tops &amp; shoes</small>
+        </div>
+        <div class="screen-card">
+          <span class="screen-card-emoji">⚡</span>
+          <strong>Instant Checkout</strong>
+          <small>Google Pay &amp; COD</small>
+        </div>
+        <div class="screen-card">
+          <span class="screen-card-emoji">🔄</span>
+          <strong>Free 7-Day Returns</strong>
+          <small>No questions asked</small>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+
+
+  <!-- Main Website JavaScript -->
+  <script src="app.js"></script>
+</body>
+</html>

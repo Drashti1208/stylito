@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Us — Stylish</title>
+  <meta name="description" content="Discover the story behind Stylish: elevated fashion, conscious craftsmanship, and modern everyday style." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .page-hero {
+      background-color: var(--color-bg-sand);
+      padding: 70px 0 50px;
+      text-align: center;
+      margin-bottom: 60px;
+    }
+    .page-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2.4rem, 4vw, 3.6rem);
+      font-weight: 400;
+      margin-bottom: 12px;
+    }
+    .story-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+      margin-bottom: 80px;
+    }
+    .story-content h2 {
+      font-family: var(--font-serif);
+      font-size: 2.2rem;
+      font-weight: 400;
+      margin-bottom: 20px;
+      line-height: 1.25;
+    }
+    .story-content p {
+      color: var(--color-text-muted);
+      margin-bottom: 16px;
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+    .story-image {
+      border-radius: 2px;
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      aspect-ratio: 4 / 3.2;
+    }
+    .story-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 36px;
+      margin-bottom: 80px;
+    }
+    .value-card {
+      background-color: var(--color-bg-subtle);
+      border: 1px solid var(--color-border);
+      padding: 36px 30px;
+      border-radius: 2px;
+    }
+    .value-card h3 {
+      font-family: var(--font-serif);
+      font-size: 1.3rem;
+      margin-bottom: 12px;
+    }
+    .value-card p {
+      font-size: 0.88rem;
+      color: var(--color-text-muted);
+      line-height: 1.6;
+    }
+    @media (max-width: 768px) {
+      .story-grid { grid-template-columns: 1fr; gap: 36px; }
+      .values-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Top Announcement Bar -->
+  <div class="announcement-bar">
+    FREE SHIPPING ON ORDERS OVER  <span class="divider">|</span> EASY RETURNS WITHIN 30 DAYS
+  </div>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container nav-inner">
+      <a href="index.html" class="brand-logo" aria-label="Stylish">
+        <img src="assets/images/logo.png" alt="Stylish" class="brand-logo-img" />
+      </a>
+      <div class="header-actions">
+        <a href="index.html" class="btn btn-primary" style="padding: 10px 22px; font-size: 0.75rem;">BACK TO SHOP</a>
+
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <span class="hero-eyebrow">OUR HERITAGE</span>
+        <h1 class="page-title">Elevated Style. Everyday You.</h1>
+        <p style="color: var(--color-text-muted); max-width: 580px; margin: 0 auto; font-size: 0.95rem;">
+          Stylish was founded on a simple philosophy: fashion should be vibrant, thoughtful, and crafted to inspire confidence in every moment.
+        </p>
+      </div>
+    </section>
+
+    <div class="container">
+      <!-- Section 1 -->
+      <section class="story-grid">
+        <div class="story-content">
+          <h2>Thoughtful Silhouettes, Built to Endure</h2>
+          <p>
+            We believe that true elegance lies in subtle refinement. Every garment in our collection is designed with conscious intention — selecting sustainable, high-grade fabrics that feel exceptional against the skin and maintain their drape season after season.
+          </p>
+          <p>
+            From our signature tailored blazers to everyday essentials, our silhouettes bridge classic minimalism with modern poise.
+          </p>
+          <a href="index.html#new-arrivals" class="btn btn-primary" style="margin-top: 12px;">EXPLORE COLLECTION</a>
+        </div>
+        <div class="story-image">
+          <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1000&q=80" alt="Stylish Craftsmanship" />
+        </div>
+      </section>
+
+      <!-- Section 2: Values -->
+      <h2 style="font-family: var(--font-serif); text-align: center; font-size: 2rem; margin-bottom: 40px;">Our Core Pillars</h2>
+      <div class="values-grid">
+        <div class="value-card">
+          <h3>Conscious Quality</h3>
+          <p>We partner with responsible mills and artisan workshops committed to fair wages, premium natural fibers, and minimal ecological footprint.</p>
+        </div>
+        <div class="value-card">
+          <h3>Architectural Cut</h3>
+          <p>Every pattern is engineered to celebrate the natural body form with effortless movement, refined seams, and flattering proportions.</p>
+        </div>
+        <div class="value-card">
+          <h3>Everlasting Wardrobe</h3>
+          <p>Instead of chasing fleeting seasonal fads, we produce enduring capsule pieces designed to be styled and loved for years.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom" style="border:none; padding-top: 0;">
+        <p class="copyright-text">&copy; 2026 Stylish. All Rights Reserved.</p>
+        <div class="payment-badges">
+          <span class="payment-badge">VISA</span>
+          <span class="payment-badge">MC</span>
+          <span class="payment-badge">AMEX</span>
+          <span class="payment-badge">PAYPAL</span>
+          <span class="payment-badge">APPLE PAY</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
