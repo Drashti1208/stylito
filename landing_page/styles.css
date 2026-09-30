@@ -344,9 +344,9 @@ button {
 .hero-section {
   position: relative;
   overflow: hidden;
-  padding: 85px 0 95px;
-  min-height: 580px;
-  background: url('assets/images/hero_flatlay_vacation_hd.jpg') center center / cover no-repeat;
+  padding: 60px 0;
+  min-height: clamp(560px, 56.25vw, 860px);
+  background: #ea7f89 url('assets/images/hero_flatlay_pink_outfit_hd.jpg') center center / cover no-repeat;
   color: #FFFFFF;
   display: flex;
   align-items: center;
@@ -370,7 +370,7 @@ button {
 }
 
 .hero-content-cinematic {
-  max-width: 760px;
+  max-width: 680px;
   text-align: center;
   display: flex;
   flex-direction: column;
