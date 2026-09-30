@@ -706,24 +706,51 @@
     const userNameText = document.getElementById('navUserName');
     const navAvatarInitial = document.getElementById('navAvatarInitial');
     const profileBtn = document.getElementById('profileTriggerBtn');
-    const navProfileLoginBtn = document.getElementById('navProfileLoginBtn');
+    const navProfileLoginBtn = document.getElementById('openStylishAuthBtn') || document.getElementById('navProfileLoginBtn');
+    const headerUserBadge = document.getElementById('headerUserBadge');
+    const headerUserName = document.getElementById('headerUserName');
+    const headerUserInitials = document.getElementById('headerUserInitials');
+    const dropdownUserFullName = document.getElementById('dropdownUserFullName');
+    const dropdownUserEmail = document.getElementById('dropdownUserEmail');
+    const mobileDrawerLoginLabel = document.getElementById('mobileDrawerLoginLabel');
     const sheetAuthLoggedOut = document.getElementById('sheetAuthLoggedOut');
     const sheetStatus = document.getElementById('sheetUserStatus');
 
-    if (user && user.name) {
+    if (user && (user.name || user.email)) {
+      const displayName = user.name || (user.email ? user.email.split('@')[0] : 'User');
+      const firstLetter = displayName.charAt(0).toUpperCase();
+
       if (greeting && userNameText) {
-        userNameText.textContent = 'Hi, ' + user.name.split(' ')[0];
+        userNameText.textContent = 'Hi, ' + displayName.split(' ')[0];
         greeting.style.display = 'inline-flex';
       }
       if (navAvatarInitial) {
-        navAvatarInitial.textContent = (user.name || 'U').charAt(0).toUpperCase();
+        navAvatarInitial.textContent = firstLetter;
       }
-      // Hide the LOGIN button in header when logged in
+      // Hide login button, show user badge in header
       if (navProfileLoginBtn) {
         navProfileLoginBtn.style.display = 'none';
       }
       if (profileBtn) {
         profileBtn.style.display = 'none';
+      }
+      if (headerUserBadge) {
+        headerUserBadge.style.display = 'block';
+      }
+      if (headerUserName) {
+        headerUserName.textContent = displayName.split(' ')[0];
+      }
+      if (headerUserInitials) {
+        headerUserInitials.textContent = firstLetter;
+      }
+      if (dropdownUserFullName) {
+        dropdownUserFullName.textContent = displayName;
+      }
+      if (dropdownUserEmail) {
+        dropdownUserEmail.textContent = user.email || user.phone || '';
+      }
+      if (mobileDrawerLoginLabel) {
+        mobileDrawerLoginLabel.textContent = displayName.split(' ')[0] + ' (Sign Out)';
       }
       if (sheetAuthLoggedOut) {
         sheetAuthLoggedOut.style.display = 'none';
@@ -734,16 +761,15 @@
           <div style="display:flex; align-items:center; justify-content:space-between; width:100%; gap:12px;">
             <div style="display:flex; align-items:center; gap:10px; min-width:0;">
               <div style="width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg, #10b981, #059669); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:15px; flex-shrink:0;">
-                ${escapeHtml((user.name || 'U').charAt(0).toUpperCase())}
+                ${escapeHtml(firstLetter)}
               </div>
               <div style="min-width:0; text-align:left;">
-                <div style="font-weight:700; font-size:0.88rem; color:#065f46; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(user.name)}</div>
+                <div style="font-weight:700; font-size:0.88rem; color:#065f46; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(displayName)}</div>
                 <div style="font-size:0.75rem; color:#047857; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(user.email || user.phone || 'Verified User')}</div>
               </div>
             </div>
             <div style="display:flex; gap:6px; flex-shrink:0;">
-              <button type="button" onclick="openUserAccountModal()" style="background:#e0f2fe; border:1px solid #7dd3fc; color:#0369a1; border-radius:6px; padding:6px 10px; font-size:0.78rem; font-weight:600; cursor:pointer;">Change</button>
-              <button type="button" onclick="logoutUser()" style="background:#fee2e2; border:1px solid #fca5a5; color:#b91c1c; border-radius:6px; padding:6px 10px; font-size:0.78rem; font-weight:600; cursor:pointer;">Sign Out</button>
+              <button type="button" onclick="handleStylishLogout()" style="background:#fee2e2; border:1px solid #fca5a5; color:#b91c1c; border-radius:6px; padding:6px 10px; font-size:0.78rem; font-weight:600; cursor:pointer;">Sign Out</button>
             </div>
           </div>
         `;
@@ -757,6 +783,15 @@
       if (profileBtn) {
         profileBtn.style.display = 'inline-flex';
       }
+      if (headerUserBadge) {
+        headerUserBadge.style.display = 'none';
+      }
+      const dropdown = document.getElementById('headerUserDropdown');
+      if (dropdown) dropdown.classList.remove('active');
+
+      if (mobileDrawerLoginLabel) {
+        mobileDrawerLoginLabel.textContent = 'LOGIN / SIGN UP';
+      }
       if (sheetAuthLoggedOut) {
         sheetAuthLoggedOut.style.display = 'block';
       }
@@ -767,22 +802,288 @@
     }
   }
 
-  // Auth modals, Google and Phone OTP containers temporarily deleted per user request
-  window.openUserAccountModal = () => {};
-  window.closeUserAccountModal = () => {};
-  window.logoutUser = () => {};
-  window.openGoogleAccountPicker = () => {};
-  window.closeGoogleAccountPicker = () => {};
-  window.triggerGoogleSignInFlow = () => {};
-  window.submitCustomGoogleAccount = () => {};
-  window.selectGoogleAccount = () => {};
-  window.openPhoneOtpModal = () => {};
-  window.closePhoneOtpModal = () => {};
-  window.sendPhoneOtp = () => {};
-  window.verifyPhoneOtp = () => {};
-  window.autofillTestOtp = () => {};
-  window.resetPhoneStep = () => {};
-  window.updateLinkedBadges = () => {};
+  // ==========================================================================
+  // COMPACT REAL-TIME AUTH MODAL (LOGIN & SIGN UP CONNECTED TO SQLITE BACKEND)
+  // ==========================================================================
+  const AUTH_API_URL = 'http://localhost:5000/api/auth';
+
+  window.openStylishAuthModal = function (tab = 'signin') {
+    // If already logged in and clicked from mobile drawer
+    try {
+      const stored = localStorage.getItem('stylito_user');
+      if (stored && tab !== 'signin' && tab !== 'signup') {
+        const user = JSON.parse(stored);
+        if (user && user.name) {
+          window.handleStylishLogout();
+          return;
+        }
+      }
+    } catch (_) {}
+
+    const modal = document.getElementById('stylishAuthModal');
+    const backdrop = document.getElementById('stylishAuthBackdrop');
+    const alertBox = document.getElementById('authAlertBox');
+    if (alertBox) {
+      alertBox.style.display = 'none';
+      alertBox.className = 'auth-alert-box';
+      alertBox.textContent = '';
+    }
+
+    if (modal) modal.classList.add('active');
+    if (backdrop) backdrop.classList.add('active');
+    document.body.style.overflow = 'hidden';
+
+    window.switchStylishAuthTab(tab);
+  };
+
+  window.closeStylishAuthModal = function () {
+    const modal = document.getElementById('stylishAuthModal');
+    const backdrop = document.getElementById('stylishAuthBackdrop');
+    if (modal) modal.classList.remove('active');
+    if (backdrop) backdrop.classList.remove('active');
+    document.body.style.overflow = '';
+  };
+
+  window.switchStylishAuthTab = function (tab) {
+    const tabSignIn = document.getElementById('tabBtnSignIn');
+    const tabSignUp = document.getElementById('tabBtnSignUp');
+    const formLogin = document.getElementById('formStylishLogin');
+    const formSignup = document.getElementById('formStylishSignup');
+    const title = document.getElementById('stylishAuthTitle');
+    const desc = document.getElementById('stylishAuthDesc');
+    const alertBox = document.getElementById('authAlertBox');
+
+    if (alertBox) alertBox.style.display = 'none';
+
+    if (tab === 'signup') {
+      if (tabSignUp) tabSignUp.classList.add('active');
+      if (tabSignIn) tabSignIn.classList.remove('active');
+      if (formLogin) formLogin.style.display = 'none';
+      if (formSignup) formSignup.style.display = 'block';
+      if (title) title.textContent = 'Create Account';
+      if (desc) desc.textContent = 'Join Stylito for exclusive member perks & faster orders';
+    } else {
+      if (tabSignIn) tabSignIn.classList.add('active');
+      if (tabSignUp) tabSignUp.classList.remove('active');
+      if (formSignup) formSignup.style.display = 'none';
+      if (formLogin) formLogin.style.display = 'block';
+      if (title) title.textContent = 'Welcome to Stylito';
+      if (desc) desc.textContent = 'Sign in to sync your bag, wishlist & orders';
+    }
+  };
+
+  window.togglePasswordVisibility = function (inputId, btn) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    const isPassword = input.type === 'password';
+    input.type = isPassword ? 'text' : 'password';
+
+    if (btn) {
+      if (isPassword) {
+        btn.innerHTML = `
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+            <line x1="1" y1="1" x2="23" y2="23"></line>
+          </svg>
+        `;
+      } else {
+        btn.innerHTML = `
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+        `;
+      }
+    }
+  };
+
+  window.toggleUserDropdown = function () {
+    const dropdown = document.getElementById('headerUserDropdown');
+    if (dropdown) dropdown.classList.toggle('active');
+  };
+
+  window.closeUserDropdown = function () {
+    const dropdown = document.getElementById('headerUserDropdown');
+    if (dropdown) dropdown.classList.remove('active');
+  };
+
+  window.handleStylishLogout = function () {
+    localStorage.removeItem('stylito_user');
+    localStorage.removeItem('stylito_token');
+    updateAuthUI(null);
+    window.closeUserDropdown();
+    showToast('You have signed out successfully.');
+  };
+
+  window.handleForgotPasswordClick = function () {
+    const emailInput = document.getElementById('authLoginEmail');
+    const emailVal = emailInput ? emailInput.value.trim() : '';
+    showToast('To reset password, please verify OTP via backend or contact support@stylito.com');
+  };
+
+  // Real-time Login with SQLite Backend
+  window.handleStylishLoginSubmit = async function (e) {
+    if (e && e.preventDefault) e.preventDefault();
+
+    const email = document.getElementById('authLoginEmail').value.trim();
+    const password = document.getElementById('authLoginPassword').value;
+    const alertBox = document.getElementById('authAlertBox');
+    const submitBtn = document.getElementById('btnSubmitLogin');
+
+    if (!email || !password) {
+      if (alertBox) {
+        alertBox.className = 'auth-alert-box error';
+        alertBox.textContent = 'Please enter both email and password.';
+        alertBox.style.display = 'block';
+      }
+      return;
+    }
+
+    const origBtnHtml = submitBtn ? submitBtn.innerHTML : '<span>Sign In</span>';
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span>Signing in...</span>';
+    }
+    if (alertBox) alertBox.style.display = 'none';
+
+    try {
+      const res = await fetch(`${AUTH_API_URL}/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        // Save real-time user session
+        localStorage.setItem('stylito_token', data.token);
+        localStorage.setItem('stylito_user', JSON.stringify(data.user));
+
+        updateAuthUI(data.user);
+        window.closeStylishAuthModal();
+        showToast(`Welcome back, ${data.user.name}!`);
+
+        const form = document.getElementById('formStylishLogin');
+        if (form) form.reset();
+      } else {
+        if (alertBox) {
+          alertBox.className = 'auth-alert-box error';
+          alertBox.textContent = data.message || 'Invalid email or password.';
+          alertBox.style.display = 'block';
+        }
+      }
+    } catch (err) {
+      console.error('Login network error:', err);
+      if (alertBox) {
+        alertBox.className = 'auth-alert-box error';
+        alertBox.textContent = 'Could not connect to backend server. Make sure the server is running on port 5000.';
+        alertBox.style.display = 'block';
+      }
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = origBtnHtml;
+      }
+    }
+  };
+
+  // Real-time Register / Sign Up with SQLite Backend
+  window.handleStylishSignupSubmit = async function (e) {
+    if (e && e.preventDefault) e.preventDefault();
+
+    const name = document.getElementById('authSignupName').value.trim();
+    const email = document.getElementById('authSignupEmail').value.trim();
+    const phone = document.getElementById('authSignupPhone').value.trim();
+    const password = document.getElementById('authSignupPassword').value;
+    const alertBox = document.getElementById('authAlertBox');
+    const submitBtn = document.getElementById('btnSubmitSignup');
+
+    if (!name || !email || !password) {
+      if (alertBox) {
+        alertBox.className = 'auth-alert-box error';
+        alertBox.textContent = 'Name, email, and password are required.';
+        alertBox.style.display = 'block';
+      }
+      return;
+    }
+
+    if (password.length < 6) {
+      if (alertBox) {
+        alertBox.className = 'auth-alert-box error';
+        alertBox.textContent = 'Password must be at least 6 characters.';
+        alertBox.style.display = 'block';
+      }
+      return;
+    }
+
+    const origBtnHtml = submitBtn ? submitBtn.innerHTML : '<span>Create Account</span>';
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span>Creating Account...</span>';
+    }
+    if (alertBox) alertBox.style.display = 'none';
+
+    try {
+      const res = await fetch(`${AUTH_API_URL}/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, phone, password })
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        // Save real-time user session
+        localStorage.setItem('stylito_token', data.token);
+        localStorage.setItem('stylito_user', JSON.stringify(data.user));
+
+        updateAuthUI(data.user);
+        window.closeStylishAuthModal();
+        showToast(`Account created successfully! Welcome, ${data.user.name}!`);
+
+        const form = document.getElementById('formStylishSignup');
+        if (form) form.reset();
+      } else {
+        if (alertBox) {
+          alertBox.className = 'auth-alert-box error';
+          alertBox.textContent = data.message || 'Could not register account.';
+          alertBox.style.display = 'block';
+        }
+      }
+    } catch (err) {
+      console.error('Sign up network error:', err);
+      if (alertBox) {
+        alertBox.className = 'auth-alert-box error';
+        alertBox.textContent = 'Could not connect to backend server. Make sure the server is running on port 5000.';
+        alertBox.style.display = 'block';
+      }
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = origBtnHtml;
+      }
+    }
+  };
+
+  // Close dropdown on click outside & Escape key handler
+  document.addEventListener('click', (e) => {
+    const userBadge = document.getElementById('headerUserBadge');
+    const dropdown = document.getElementById('headerUserDropdown');
+    if (dropdown && dropdown.classList.contains('active')) {
+      if (userBadge && !userBadge.contains(e.target)) {
+        dropdown.classList.remove('active');
+      }
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      window.closeStylishAuthModal();
+      window.closeUserDropdown();
+      window.closePlayStoreModal();
+    }
+  });
 
   // Google Play Store Download Modal & Animation
   let playDownloadTimer = null;
@@ -848,17 +1149,6 @@
     showToast('Launching Stylito Android app preview!');
     closePlayStoreModal();
   };
-
-  // ==========================================================================
-  // Auth & login modals and containers temporarily deleted per user request
-  // ==========================================================================
-  window.openStylishAuthModal = () => {};
-  window.closeStylishAuthModal = () => {};
-  window.switchStylishAuthTab = () => {};
-  window.togglePasswordVisibility = () => {};
-  window.handleForgotPasswordClick = () => {};
-  window.handleStylishLoginSubmit = (e) => { if (e && e.preventDefault) e.preventDefault(); };
-  window.handleStylishSignupSubmit = (e) => { if (e && e.preventDefault) e.preventDefault(); };
 
   // Kickoff on DOM Ready
   if (document.readyState === 'loading') {

@@ -52,6 +52,41 @@
           </ul>
         </nav>
 
+        <!-- User Icon with LOGIN text underneath (per user design) -->
+        <div class="header-auth-group" id="headerAuthGroup">
+          <button type="button" class="nav-profile-login-btn" id="openStylishAuthBtn" onclick="openStylishAuthModal()" title="Login or Sign Up" aria-label="Login or Sign Up">
+            <span class="nav-profile-icon-circle">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </span>
+            <span class="nav-profile-label">LOGIN</span>
+          </button>
+
+          <!-- User Logged-in Dropdown (shown when logged in) -->
+          <div class="header-user-badge" id="headerUserBadge" style="display:none;">
+            <button type="button" class="user-logged-btn" id="userMenuToggleBtn" onclick="toggleUserDropdown()" aria-label="User account menu">
+              <span class="user-avatar-circle active" id="headerUserInitials">U</span>
+              <span class="user-name-label" id="headerUserName">User</span>
+              <svg class="chevron-icon" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="header-user-dropdown" id="headerUserDropdown">
+              <div class="user-dropdown-info">
+                <strong id="dropdownUserFullName">User</strong>
+                <small id="dropdownUserEmail">user@example.com</small>
+              </div>
+              <hr class="user-dropdown-divider" />
+              <a href="javascript:void(0)" class="user-dropdown-item open-bottom-contact" onclick="closeUserDropdown()">
+                <span>👤</span> My Profile &amp; Contact
+              </a>
+              <button type="button" class="user-dropdown-item logout-item" onclick="handleStylishLogout()">
+                <span>🚪</span> Sign Out
+              </button>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   </header>
@@ -68,7 +103,8 @@
       <li><a href="#featured-brands">BRAND</a></li>
       <li><a href="#sale" style="color:var(--color-primary); font-weight:700;">SALE</a></li>
       <li><a href="javascript:void(0)" class="open-bottom-contact">CONTACT</a></li>
-      <li><a href="javascript:void(0)" class="open-bottom-contact" style="display:flex; align-items:center; gap:10px; color:var(--color-primary); font-weight:700; margin-top:4px;"><span style="width:26px; height:26px; border-radius:50%; background:linear-gradient(135deg, #FFA987, #F87189); display:inline-flex; align-items:center; justify-content:center; color:#fff; font-size:12px;">👤</span> PROFILE &amp; CONTACT DETAILS</a></li>
+      <li id="mobileDrawerLoginItem"><a href="javascript:void(0)" onclick="closeMobileDrawer(); openStylishAuthModal();" style="display:flex; align-items:center; gap:10px; color:var(--color-primary); font-weight:700; margin-top:4px;"><span style="width:26px; height:26px; border-radius:50%; background:linear-gradient(135deg, #FFA987, #F87189); display:inline-flex; align-items:center; justify-content:center; color:#fff; font-size:12px;">🔑</span> <span id="mobileDrawerLoginLabel">LOGIN / SIGN UP</span></a></li>
+      <li><a href="javascript:void(0)" class="open-bottom-contact" style="display:flex; align-items:center; gap:10px; color:var(--color-text-dark); font-weight:600; margin-top:4px;"><span style="width:26px; height:26px; border-radius:50%; background:#f1f5f9; display:inline-flex; align-items:center; justify-content:center; color:#475569; font-size:12px;">👤</span> PROFILE &amp; CONTACT DETAILS</a></li>
       <li><hr style="border:none; border-top:1px solid var(--color-border); margin: 10px 0;" /></li>
       <li><a href="about.html">ABOUT STYLISH</a></li>
       <li><a href="privacy-policy.html">PRIVACY POLICY</a></li>
@@ -996,7 +1032,119 @@
     </div>
   </aside>
 
+  <!-- =================================================
+       16. COMPACT REAL-TIME AUTH MODAL (LOGIN & SIGN UP)
+       ================================================= -->
+  <div class="stylish-auth-backdrop" id="stylishAuthBackdrop" onclick="closeStylishAuthModal()"></div>
+  <aside class="stylish-auth-modal" id="stylishAuthModal" role="dialog" aria-modal="true" aria-label="Sign In or Create Account">
+    <button type="button" class="stylish-auth-close" onclick="closeStylishAuthModal()" aria-label="Close">&times;</button>
 
+    <div class="stylish-auth-header">
+      <div class="stylish-auth-brand-icon">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+      </div>
+      <h3 class="stylish-auth-title" id="stylishAuthTitle">Welcome to Stylito</h3>
+      <p class="stylish-auth-desc" id="stylishAuthDesc">Sign in to sync your bag, wishlist &amp; orders</p>
+    </div>
+
+    <!-- Dual Segment Tab Switcher -->
+    <div class="stylish-auth-tabs">
+      <button type="button" class="auth-tab-btn active" id="tabBtnSignIn" onclick="switchStylishAuthTab('signin')">Sign In</button>
+      <button type="button" class="auth-tab-btn" id="tabBtnSignUp" onclick="switchStylishAuthTab('signup')">Sign Up</button>
+    </div>
+
+    <!-- Alert / Message Banner -->
+    <div class="auth-alert-box" id="authAlertBox" style="display:none;"></div>
+
+    <!-- 1. SIGN IN FORM -->
+    <form class="stylish-auth-form" id="formStylishLogin" onsubmit="handleStylishLoginSubmit(event)">
+      <div class="auth-input-group">
+        <label for="authLoginEmail">Email Address</label>
+        <div class="auth-input-wrapper">
+          <svg class="auth-input-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+          <input type="email" id="authLoginEmail" required placeholder="you@example.com" autocomplete="email" />
+        </div>
+      </div>
+
+      <div class="auth-input-group">
+        <div class="auth-label-row">
+          <label for="authLoginPassword">Password</label>
+          <a href="javascript:void(0)" class="auth-forgot-link" onclick="handleForgotPasswordClick()">Forgot?</a>
+        </div>
+        <div class="auth-input-wrapper">
+          <svg class="auth-input-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          <input type="password" id="authLoginPassword" required placeholder="Enter password" autocomplete="current-password" />
+          <button type="button" class="btn-toggle-eye" onclick="togglePasswordVisibility('authLoginPassword', this)" aria-label="Toggle password visibility">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="auth-options-row">
+        <label class="auth-remember-label">
+          <input type="checkbox" id="authRememberMe" checked />
+          <span>Remember me</span>
+        </label>
+      </div>
+
+      <button type="submit" class="btn-auth-submit" id="btnSubmitLogin">
+        <span>Sign In</span>
+      </button>
+
+      <div class="auth-switch-text">
+        Don't have an account? <a href="javascript:void(0)" onclick="switchStylishAuthTab('signup')">Sign Up</a>
+      </div>
+    </form>
+
+    <!-- 2. SIGN UP FORM -->
+    <form class="stylish-auth-form" id="formStylishSignup" style="display:none;" onsubmit="handleStylishSignupSubmit(event)">
+      <div class="auth-input-group">
+        <label for="authSignupName">Full Name</label>
+        <div class="auth-input-wrapper">
+          <svg class="auth-input-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          <input type="text" id="authSignupName" required placeholder="e.g. Priya Sharma" autocomplete="name" />
+        </div>
+      </div>
+
+      <div class="auth-input-group">
+        <label for="authSignupEmail">Email Address</label>
+        <div class="auth-input-wrapper">
+          <svg class="auth-input-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+          <input type="email" id="authSignupEmail" required placeholder="you@example.com" autocomplete="email" />
+        </div>
+      </div>
+
+      <div class="auth-input-group">
+        <label for="authSignupPhone">Phone Number <small style="color:#94a3b8; font-weight:normal;">(optional)</small></label>
+        <div class="auth-input-wrapper">
+          <svg class="auth-input-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+          <input type="tel" id="authSignupPhone" placeholder="+91 98765 43210" autocomplete="tel" />
+        </div>
+      </div>
+
+      <div class="auth-input-group">
+        <label for="authSignupPassword">Create Password</label>
+        <div class="auth-input-wrapper">
+          <svg class="auth-input-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          <input type="password" id="authSignupPassword" required minlength="6" placeholder="At least 6 characters" autocomplete="new-password" />
+          <button type="button" class="btn-toggle-eye" onclick="togglePasswordVisibility('authSignupPassword', this)" aria-label="Toggle password visibility">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          </button>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-auth-submit" id="btnSubmitSignup">
+        <span>Create Account</span>
+      </button>
+
+      <div class="auth-switch-text">
+        Already have an account? <a href="javascript:void(0)" onclick="switchStylishAuthTab('signin')">Sign In</a>
+      </div>
+    </form>
+  </aside>
 
   <!-- Main Website JavaScript -->
   <script src="app.js"></script>
