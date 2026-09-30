@@ -1099,6 +1099,26 @@
             <div class="auth-switch-text">
               Don't have an account? <a href="javascript:void(0)" onclick="switchStylishAuthTab('signup')">Sign Up</a>
             </div>
+
+            <!-- Social / Alternative Auth (Google & Phone OTP) -->
+            <div class="auth-social-divider">
+              <span>or continue with</span>
+            </div>
+
+            <div class="auth-social-row">
+              <button type="button" class="btn-social-auth btn-google-auth" onclick="openGoogleAuthModal()" title="Sign in with Google">
+                <img src="assets/icons/google.svg" alt="Google" width="18" height="18" />
+                <span>Google</span>
+              </button>
+
+              <button type="button" class="btn-social-auth btn-phone-auth" onclick="openPhoneOtpModal()" title="Sign in with Mobile Number OTP">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+                  <line x1="12" y1="18" x2="12.01" y2="18"></line>
+                </svg>
+                <span>Phone OTP</span>
+              </button>
+            </div>
           </form>
         </div>
 
@@ -1168,10 +1188,181 @@
             <div class="auth-switch-text">
               Already have an account? <a href="javascript:void(0)" onclick="switchStylishAuthTab('signin')">Sign In</a>
             </div>
+
+            <!-- Social / Alternative Auth (Google & Phone OTP) -->
+            <div class="auth-social-divider">
+              <span>or continue with</span>
+            </div>
+
+            <div class="auth-social-row">
+              <button type="button" class="btn-social-auth btn-google-auth" onclick="openGoogleAuthModal()" title="Sign in with Google">
+                <img src="assets/icons/google.svg" alt="Google" width="18" height="18" />
+                <span>Google</span>
+              </button>
+
+              <button type="button" class="btn-social-auth btn-phone-auth" onclick="openPhoneOtpModal()" title="Sign in with Mobile Number OTP">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+                  <line x1="12" y1="18" x2="12.01" y2="18"></line>
+                </svg>
+                <span>Phone OTP</span>
+              </button>
+            </div>
           </form>
         </div>
 
       </div>
+    </div>
+
+    <!-- Phone OTP Viewport (Opens when clicking Phone OTP) -->
+    <div class="phone-otp-viewport" id="stylishPhoneOtpViewport" style="display: none;">
+      <div class="stylish-auth-header">
+        <div class="stylish-auth-brand-icon phone-brand-icon">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+            <line x1="12" y1="18" x2="12.01" y2="18"></line>
+          </svg>
+        </div>
+        <h3 class="stylish-auth-title" id="phoneOtpTitle">Mobile OTP Login</h3>
+        <p class="stylish-auth-desc" id="phoneOtpDesc">Instant real-time verification via SMS OTP</p>
+      </div>
+
+      <div class="auth-alert-box" id="authAlertBoxPhone" style="display: none;"></div>
+
+      <!-- Step 1: Phone Number Input -->
+      <div id="phoneOtpStep1">
+        <div class="auth-input-group">
+          <label for="phoneCustomerName">Your Name <small style="color:#94a3b8; font-weight:normal;">(optional)</small></label>
+          <div class="auth-input-wrapper">
+            <svg class="auth-input-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            <input type="text" id="phoneCustomerName" placeholder="e.g. Priya Sharma" autocomplete="name" />
+          </div>
+        </div>
+
+        <div class="auth-input-group">
+          <label for="phoneCustomerNumber">Mobile Number *</label>
+          <div class="phone-input-combined">
+            <div class="phone-country-tag">
+              <span class="flag-icon">🇮🇳</span>
+              <span>+91</span>
+            </div>
+            <input type="tel" id="phoneCustomerNumber" placeholder="98765 43210" maxlength="10" required />
+          </div>
+        </div>
+
+        <button type="button" class="btn-auth-submit" id="btnSendPhoneOtp" onclick="handleSendPhoneOtp()">
+          <span>Send 6-Digit OTP</span>
+        </button>
+
+        <div class="auth-switch-text">
+          <a href="javascript:void(0)" onclick="closePhoneOtpView()">← Back to Email Sign In</a>
+        </div>
+      </div>
+
+      <!-- Step 2: OTP Verification Input -->
+      <div id="phoneOtpStep2" style="display: none;">
+        <div class="otp-target-badge">
+          <span>OTP sent to:</span>
+          <strong id="otpTargetDisplay">+91 98765 43210</strong>
+          <button type="button" class="btn-edit-number" onclick="editPhoneNumber()" title="Change number">Edit</button>
+        </div>
+
+        <label class="otp-input-label">Enter 6-Digit Verification Code</label>
+        <div class="otp-digit-inputs" id="otpDigitInputs">
+          <input type="text" class="otp-digit-box" maxlength="1" data-idx="0" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" />
+          <input type="text" class="otp-digit-box" maxlength="1" data-idx="1" inputmode="numeric" pattern="[0-9]*" />
+          <input type="text" class="otp-digit-box" maxlength="1" data-idx="2" inputmode="numeric" pattern="[0-9]*" />
+          <input type="text" class="otp-digit-box" maxlength="1" data-idx="3" inputmode="numeric" pattern="[0-9]*" />
+          <input type="text" class="otp-digit-box" maxlength="1" data-idx="4" inputmode="numeric" pattern="[0-9]*" />
+          <input type="text" class="otp-digit-box" maxlength="1" data-idx="5" inputmode="numeric" pattern="[0-9]*" />
+        </div>
+
+        <div class="otp-timer-row">
+          <span id="otpTimerText">Resend in <strong id="otpTimerSeconds">30s</strong></span>
+          <button type="button" id="btnResendOtp" style="display: none;" onclick="handleSendPhoneOtp(true)" class="btn-resend-link">
+            🔄 Resend OTP
+          </button>
+        </div>
+
+        <button type="button" class="btn-auth-submit" id="btnVerifyPhoneOtp" onclick="handleVerifyPhoneOtp()">
+          <span>Verify &amp; Continue</span>
+        </button>
+
+        <div class="auth-switch-text">
+          <a href="javascript:void(0)" onclick="closePhoneOtpView()">← Back to Email Sign In</a>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Real-Time SMS Push Notification Banner -->
+  <aside class="sms-push-banner" id="smsPushBanner" role="alert" style="display: none;">
+    <div class="sms-push-card">
+      <div class="sms-push-top">
+        <div class="sms-app-info">
+          <span class="sms-app-badge">💬</span>
+          <span class="sms-app-title">MESSAGES</span>
+          <span class="sms-app-time">• now</span>
+        </div>
+        <button type="button" class="sms-push-dismiss" onclick="dismissSmsBanner()" aria-label="Dismiss">&times;</button>
+      </div>
+      <div class="sms-push-content">
+        <div class="sms-push-sender">Stylito Security</div>
+        <div class="sms-push-message" id="smsPushMessage">
+          Your Stylito verification code is <strong class="sms-highlight-code" id="smsHighlightCode">000000</strong>. Valid for 10 minutes.
+        </div>
+      </div>
+      <div class="sms-push-footer">
+        <button type="button" class="btn-sms-autofill" onclick="autoFillOtpFromNotification()">
+          <span>⚡ Auto-Fill Code</span>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Google Sign In Account Selector Modal -->
+  <div class="google-auth-backdrop" id="googleAuthBackdrop" style="display: none;" onclick="closeGoogleAuthModal()"></div>
+  <aside class="google-auth-modal" id="googleAuthModal" style="display: none;" role="dialog" aria-modal="true" aria-label="Sign in with Google">
+    <div class="google-modal-top">
+      <img src="assets/icons/google.svg" alt="Google" width="30" height="30" />
+      <h3 class="google-modal-title">Sign in with Google</h3>
+      <p class="google-modal-subtitle">Choose an account to continue to <strong>Stylito</strong></p>
+    </div>
+    <div class="google-accounts-wrap">
+      <button type="button" class="google-acc-card" onclick="submitGoogleAuth('Priya Sharma', 'priya.sharma@gmail.com')">
+        <div class="google-acc-avatar" style="background: linear-gradient(135deg, #F83758, #FFA987);">P</div>
+        <div class="google-acc-details">
+          <strong class="google-acc-name">Priya Sharma</strong>
+          <span class="google-acc-email">priya.sharma@gmail.com</span>
+        </div>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#94a3b8" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </button>
+
+      <button type="button" class="google-acc-card" onclick="submitGoogleAuth('Drashti Patel', 'drashti1208@gmail.com')">
+        <div class="google-acc-avatar" style="background: linear-gradient(135deg, #0ea5e9, #38bdf8);">D</div>
+        <div class="google-acc-details">
+          <strong class="google-acc-name">Drashti Patel</strong>
+          <span class="google-acc-email">drashti1208@gmail.com</span>
+        </div>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#94a3b8" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </button>
+
+      <button type="button" class="google-acc-card" onclick="toggleCustomGoogleInput()">
+        <div class="google-acc-avatar" style="background: #e2e8f0; color: #475569;">+</div>
+        <div class="google-acc-details">
+          <strong class="google-acc-name">Use another Google account</strong>
+          <span class="google-acc-email">Sign in with any Gmail address</span>
+        </div>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#94a3b8" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </button>
+
+      <div id="customGoogleInputBox" style="display: none; padding: 12px 14px; background: #f8fafc; border-radius: 12px; margin-top: 6px; border: 1px solid #e2e8f0;">
+        <input type="email" id="customGoogleEmailInput" placeholder="yourname@gmail.com" class="google-custom-field" />
+        <button type="button" class="btn-custom-google-go" onclick="submitCustomGoogleAuth()">Continue</button>
+      </div>
+    </div>
+    <div class="google-modal-bottom">
+      <button type="button" class="btn-google-close" onclick="closeGoogleAuthModal()">Cancel</button>
     </div>
   </aside>
 

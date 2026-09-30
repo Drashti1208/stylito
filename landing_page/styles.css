@@ -4202,5 +4202,503 @@ button {
   text-decoration: underline;
 }
 
+/* ==========================================================================
+   19. SOCIAL AUTH (GOOGLE & PHONE OTP) & SMS PUSH NOTIFICATION
+   ========================================================================== */
+.auth-social-divider {
+  display: flex;
+  align-items: center;
+  margin: 14px 0 10px;
+  color: #94a3b8;
+  font-size: 0.72rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.auth-social-divider::before,
+.auth-social-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #e2e8f0;
+}
+
+.auth-social-divider span {
+  padding: 0 10px;
+}
+
+.auth-social-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.btn-social-auth {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 38px;
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  color: #1e293b;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0 10px;
+  font-family: inherit;
+  user-select: none;
+}
+
+.btn-social-auth:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+}
+
+.btn-social-auth:active {
+  transform: translateY(0);
+}
+
+.btn-social-auth.btn-phone-auth svg {
+  color: var(--color-primary, #F83758);
+}
+
+/* Phone OTP View */
+.phone-otp-viewport {
+  width: 100%;
+  animation: stylishAlertFade 0.25s ease;
+}
+
+.phone-brand-icon {
+  background: linear-gradient(135deg, #EFF6FF, #DBEAFE) !important;
+  color: #2563eb !important;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.15) !important;
+}
+
+.phone-input-combined {
+  display: flex;
+  align-items: center;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  background: #f8fafc;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.phone-input-combined:focus-within {
+  background: #ffffff;
+  border-color: var(--color-primary, #F83758);
+  box-shadow: 0 0 0 3px rgba(248, 55, 88, 0.12);
+}
+
+.phone-country-tag {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 10px 0 12px;
+  background: #f1f5f9;
+  border-right: 1.5px solid #e2e8f0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #334155;
+  height: 38px;
+  user-select: none;
+}
+
+.phone-input-combined input {
+  flex: 1;
+  height: 38px;
+  padding: 0 12px;
+  border: none;
+  outline: none;
+  font-size: 0.84rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  background: transparent;
+  color: #0f172a;
+  font-family: inherit;
+}
+
+/* OTP Digits Entry */
+.otp-target-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 12px;
+  background: #f1f5f9;
+  border-radius: 10px;
+  font-size: 0.74rem;
+  color: #64748b;
+  margin-bottom: 14px;
+}
+
+.otp-target-badge strong {
+  color: #0f172a;
+}
+
+.btn-edit-number {
+  background: none;
+  border: none;
+  color: var(--color-primary, #F83758);
+  font-weight: 700;
+  font-size: 0.72rem;
+  cursor: pointer;
+  padding: 0 4px;
+  text-decoration: underline;
+}
+
+.otp-input-label {
+  display: block;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 10px;
+}
+
+.otp-digit-inputs {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.otp-digit-box {
+  width: 44px;
+  height: 48px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 10px;
+  text-align: center;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #0f172a;
+  background: #ffffff;
+  outline: none;
+  transition: all 0.2s ease;
+  font-family: monospace, inherit;
+}
+
+.otp-digit-box:focus {
+  border-color: var(--color-primary, #F83758);
+  box-shadow: 0 0 0 3px rgba(248, 55, 88, 0.15);
+  transform: translateY(-2px);
+}
+
+.otp-digit-box.filled {
+  background: #fff5f7;
+  border-color: #fca5a5;
+  color: #e11d48;
+}
+
+.otp-timer-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-bottom: 14px;
+}
+
+.btn-resend-link {
+  background: none;
+  border: none;
+  color: var(--color-primary, #F83758);
+  font-weight: 700;
+  font-size: 0.75rem;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* ==========================================================================
+   20. REAL-TIME SMS PUSH NOTIFICATION BANNER
+   ========================================================================== */
+.sms-push-banner {
+  position: fixed;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 99999;
+  width: 92%;
+  max-width: 420px;
+  animation: smsSlideDown 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes smsSlideDown {
+  from { opacity: 0; transform: translate(-50%, -30px) scale(0.95); }
+  to { opacity: 1; transform: translate(-50%, 0) scale(1); }
+}
+
+.sms-push-card {
+  background: rgba(15, 23, 42, 0.94);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  color: #ffffff;
+  border-radius: 18px;
+  padding: 14px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.sms-push-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.sms-app-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #94a3b8;
+  text-transform: uppercase;
+}
+
+.sms-app-badge {
+  font-size: 1rem;
+}
+
+.sms-app-time {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.sms-push-dismiss {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 6px;
+  transition: color 0.15s;
+}
+
+.sms-push-dismiss:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.sms-push-content {
+  margin-bottom: 10px;
+}
+
+.sms-push-sender {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin-bottom: 2px;
+}
+
+.sms-push-message {
+  font-size: 0.78rem;
+  color: #cbd5e1;
+  line-height: 1.35;
+}
+
+.sms-highlight-code {
+  font-family: monospace;
+  font-size: 0.92rem;
+  color: #f43f5e;
+  background: rgba(244, 63, 94, 0.15);
+  padding: 1px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.12em;
+  border: 1px solid rgba(244, 63, 94, 0.3);
+}
+
+.sms-push-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-sms-autofill {
+  background: linear-gradient(135deg, #F83758, #FFA987);
+  color: #ffffff;
+  border: none;
+  border-radius: 9px;
+  padding: 6px 14px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(248, 55, 88, 0.35);
+}
+
+.btn-sms-autofill:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(248, 55, 88, 0.45);
+}
+
+/* ==========================================================================
+   21. GOOGLE SIGN-IN DIALOG
+   ========================================================================== */
+.google-auth-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 10005;
+}
+
+.google-auth-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 380px;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.4);
+  padding: 24px;
+  z-index: 10006;
+  animation: stylishAlertFade 0.25s ease;
+}
+
+.google-modal-top {
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.google-modal-top img {
+  display: inline-block;
+  margin-bottom: 8px;
+}
+
+.google-modal-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 4px;
+}
+
+.google-modal-subtitle {
+  font-size: 0.78rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.google-accounts-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.google-acc-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+}
+
+.google-acc-card:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
+}
+
+.google-acc-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.google-acc-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.google-acc-name {
+  display: block;
+  font-size: 0.82rem;
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.google-acc-email {
+  display: block;
+  font-size: 0.72rem;
+  color: #64748b;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.google-custom-field {
+  width: 100%;
+  height: 36px;
+  padding: 0 10px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  color: #0f172a;
+  outline: none;
+  margin-bottom: 8px;
+}
+
+.google-custom-field:focus {
+  border-color: #4285F4;
+}
+
+.btn-custom-google-go {
+  width: 100%;
+  height: 34px;
+  background: #4285F4;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.google-modal-bottom {
+  text-align: center;
+}
+
+.btn-google-close {
+  background: none;
+  border: none;
+  color: #64748b;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 12px;
+}
+
+.btn-google-close:hover {
+  color: #0f172a;
+}
+
+
 
 

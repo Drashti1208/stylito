@@ -925,6 +925,12 @@
     if (backdrop) backdrop.classList.add('active');
     document.body.style.overflow = 'hidden';
 
+    // Ensure standard flip viewport is shown and phone OTP view is reset
+    const flipViewport = document.getElementById('stylishFlipViewport');
+    const phoneViewport = document.getElementById('stylishPhoneOtpViewport');
+    if (flipViewport) flipViewport.style.display = 'block';
+    if (phoneViewport) phoneViewport.style.display = 'none';
+
     // Switch tab first so correct face is visible
     window.switchStylishAuthTab(tab);
 
@@ -952,6 +958,8 @@
     if (modal) modal.classList.remove('active');
     if (backdrop) backdrop.classList.remove('active');
     document.body.style.overflow = '';
+    window.closeGoogleAuthModal();
+    window.dismissSmsBanner();
   };
 
   window.switchStylishAuthTab = function (tab) {
@@ -1162,6 +1170,432 @@
     }
   };
 
+  // ==========================================================================
+  // REAL-TIME GOOGLE SIGN-IN & PHONE NUMBER OTP VERIFICATION
+  // ==========================================================================
+  let currentActiveOtp = '';
+  let currentActivePhone = '';
+  let otpCountdownTimer = null;
+
+  // Google Modal Open/Close
+  window.openGoogleAuthModal = function () {
+    const modal = document.getElementById('googleAuthModal');
+    const backdrop = document.getElementById('googleAuthBackdrop');
+    if (modal) modal.style.display = 'block';
+    if (backdrop) backdrop.style.display = 'block';
+  };
+
+  window.closeGoogleAuthModal = function () {
+    const modal = document.getElementById('googleAuthModal');
+    const backdrop = document.getElementById('googleAuthBackdrop');
+    if (modal) modal.style.display = 'none';
+    if (backdrop) backdrop.style.display = 'none';
+    const customBox = document.getElementById('customGoogleInputBox');
+    if (customBox) customBox.style.display = 'none';
+  };
+
+  window.toggleCustomGoogleInput = function () {
+    const customBox = document.getElementById('customGoogleInputBox');
+    if (customBox) {
+      customBox.style.display = customBox.style.display === 'none' ? 'block' : 'none';
+      if (customBox.style.display === 'block') {
+        const input = document.getElementById('customGoogleEmailInput');
+        if (input) input.focus();
+      }
+    }
+  };
+
+  window.submitCustomGoogleAuth = function () {
+    const input = document.getElementById('customGoogleEmailInput');
+    const email = input ? input.value.trim() : '';
+    if (!email || !email.includes('@')) {
+      alert('Please enter a valid Google email address.');
+      return;
+    }
+    const name = email.split('@')[0].replace(/[._-]/g, ' ');
+    window.submitGoogleAuth(name, email);
+  };
+
+  window.submitGoogleAuth = async function (name, email) {
+    try {
+      showToast(`Signing in with Google as ${name}...`);
+      const res = await fetch(`${AUTH_API_URL}/google`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: name,
+          email: email.toLowerCase().trim(),
+          google_id: 'g_' + Date.now(),
+          avatar_url: ''
+        })
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        localStorage.setItem('stylito_token', data.token);
+        localStorage.setItem('stylito_user', JSON.stringify(data.user));
+        updateAuthUI(data.user);
+        window.closeGoogleAuthModal();
+        window.closeStylishAuthModal();
+        showToast(`🎉 Signed in successfully! Welcome, ${data.user.name}!`);
+      } else {
+        alert(data.message || 'Google sign-in failed.');
+      }
+    } catch (err) {
+      console.error('Google sign in error:', err);
+      alert('Network error connecting to backend for Google sign in.');
+    }
+  };
+
+  // Phone OTP View Navigation
+  window.openPhoneOtpModal = function () {
+    const flipViewport = document.getElementById('stylishFlipViewport');
+    const phoneViewport = document.getElementById('stylishPhoneOtpViewport');
+    const step1 = document.getElementById('phoneOtpStep1');
+    const step2 = document.getElementById('phoneOtpStep2');
+    const alertBox = document.getElementById('authAlertBoxPhone');
+
+    if (flipViewport) flipViewport.style.display = 'none';
+    if (phoneViewport) phoneViewport.style.display = 'block';
+    if (step1) step1.style.display = 'block';
+    if (step2) step2.style.display = 'none';
+    if (alertBox) alertBox.style.display = 'none';
+
+    // Prefill from signup phone if available
+    const signupPhone = document.getElementById('authSignupPhone');
+    const phoneInput = document.getElementById('phoneCustomerNumber');
+    if (signupPhone && phoneInput && signupPhone.value) {
+      phoneInput.value = signupPhone.value.replace(/[^0-9]/g, '').slice(-10);
+    }
+    if (phoneInput) phoneInput.focus();
+  };
+
+  window.closePhoneOtpView = function () {
+    const flipViewport = document.getElementById('stylishFlipViewport');
+    const phoneViewport = document.getElementById('stylishPhoneOtpViewport');
+    if (phoneViewport) phoneViewport.style.display = 'none';
+    if (flipViewport) flipViewport.style.display = 'block';
+    if (otpCountdownTimer) clearInterval(otpCountdownTimer);
+  };
+
+  window.editPhoneNumber = function () {
+    const step1 = document.getElementById('phoneOtpStep1');
+    const step2 = document.getElementById('phoneOtpStep2');
+    const alertBox = document.getElementById('authAlertBoxPhone');
+    if (step1) step1.style.display = 'block';
+    if (step2) step2.style.display = 'none';
+    if (alertBox) alertBox.style.display = 'none';
+    if (otpCountdownTimer) clearInterval(otpCountdownTimer);
+  };
+
+  // Send OTP
+  window.handleSendPhoneOtp = async function (isResend = false) {
+    const phoneInput = document.getElementById('phoneCustomerNumber');
+    const nameInput = document.getElementById('phoneCustomerName');
+    const alertBox = document.getElementById('authAlertBoxPhone');
+    const sendBtn = document.getElementById(isResend ? 'btnResendOtp' : 'btnSendPhoneOtp');
+
+    const rawNumber = phoneInput ? phoneInput.value.trim().replace(/[^0-9]/g, '') : '';
+    if (!rawNumber || rawNumber.length < 10) {
+      if (alertBox) {
+        alertBox.className = 'auth-alert-box error';
+        alertBox.textContent = 'Please enter a valid 10-digit mobile number.';
+        alertBox.style.display = 'block';
+      }
+      return;
+    }
+
+    const fullPhoneNumber = '+91' + rawNumber.slice(-10);
+    currentActivePhone = fullPhoneNumber;
+
+    if (alertBox) alertBox.style.display = 'none';
+    if (sendBtn) {
+      sendBtn.disabled = true;
+      sendBtn.innerHTML = '<span>⏳ Sending OTP...</span>';
+    }
+
+    try {
+      const res = await fetch(`${AUTH_API_URL}/send-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contact: fullPhoneNumber })
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        currentActiveOtp = data.otp;
+
+        // Switch to Step 2
+        const step1 = document.getElementById('phoneOtpStep1');
+        const step2 = document.getElementById('phoneOtpStep2');
+        const targetDisplay = document.getElementById('otpTargetDisplay');
+        if (targetDisplay) targetDisplay.textContent = fullPhoneNumber;
+        if (step1) step1.style.display = 'none';
+        if (step2) step2.style.display = 'block';
+
+        // Clear and focus first OTP digit
+        clearOtpDigits();
+        focusFirstOtpDigit();
+
+        // Start Resend Timer
+        startOtpCountdown();
+
+        // Trigger SMS Push Notification at Top of Screen
+        showSmsPushNotification(fullPhoneNumber, data.otp);
+      } else {
+        if (alertBox) {
+          alertBox.className = 'auth-alert-box error';
+          alertBox.textContent = data.message || 'Failed to send OTP.';
+          alertBox.style.display = 'block';
+        }
+      }
+    } catch (err) {
+      console.error('Send OTP error:', err);
+      if (alertBox) {
+        alertBox.className = 'auth-alert-box error';
+        alertBox.textContent = 'Could not connect to backend server on port 5000.';
+        alertBox.style.display = 'block';
+      }
+    } finally {
+      if (sendBtn) {
+        sendBtn.disabled = false;
+        sendBtn.innerHTML = isResend ? '🔄 Resend OTP' : '<span>Send 6-Digit OTP</span>';
+      }
+    }
+  };
+
+  // SMS Push Notification
+  function showSmsPushNotification(phone, otpCode) {
+    const banner = document.getElementById('smsPushBanner');
+    const codeSpan = document.getElementById('smsHighlightCode');
+    const msg = document.getElementById('smsPushMessage');
+    if (codeSpan) codeSpan.textContent = otpCode;
+    if (msg) {
+      msg.innerHTML = `Your Stylito verification code is <strong class="sms-highlight-code">${otpCode}</strong>. Valid for 10 minutes.`;
+    }
+    if (banner) {
+      banner.style.display = 'block';
+    }
+
+    // Play subtle notification tone if browser allows
+    try {
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
+      gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.15);
+    } catch (_) {}
+  }
+
+  window.dismissSmsBanner = function () {
+    const banner = document.getElementById('smsPushBanner');
+    if (banner) banner.style.display = 'none';
+  };
+
+  window.autoFillOtpFromNotification = function () {
+    if (!currentActiveOtp) return;
+    const digits = currentActiveOtp.split('');
+    const inputs = document.querySelectorAll('.otp-digit-box');
+    inputs.forEach((input, i) => {
+      input.value = digits[i] || '';
+      input.classList.add('filled');
+    });
+    window.dismissSmsBanner();
+    // Auto submit verification
+    setTimeout(() => {
+      window.handleVerifyPhoneOtp();
+    }, 300);
+  };
+
+  function clearOtpDigits() {
+    const inputs = document.querySelectorAll('.otp-digit-box');
+    inputs.forEach(input => {
+      input.value = '';
+      input.classList.remove('filled');
+    });
+  }
+
+  function focusFirstOtpDigit() {
+    const firstInput = document.querySelector('.otp-digit-box[data-idx="0"]');
+    if (firstInput) firstInput.focus();
+  }
+
+  function getEnteredOtp() {
+    const inputs = document.querySelectorAll('.otp-digit-box');
+    let code = '';
+    inputs.forEach(input => { code += input.value.trim(); });
+    return code;
+  }
+
+  function startOtpCountdown() {
+    if (otpCountdownTimer) clearInterval(otpCountdownTimer);
+    let secondsLeft = 30;
+    const timerText = document.getElementById('otpTimerText');
+    const timerSeconds = document.getElementById('otpTimerSeconds');
+    const resendBtn = document.getElementById('btnResendOtp');
+
+    if (timerText) timerText.style.display = 'inline';
+    if (resendBtn) resendBtn.style.display = 'none';
+    if (timerSeconds) timerSeconds.textContent = secondsLeft + 's';
+
+    otpCountdownTimer = setInterval(() => {
+      secondsLeft--;
+      if (timerSeconds) timerSeconds.textContent = secondsLeft + 's';
+      if (secondsLeft <= 0) {
+        clearInterval(otpCountdownTimer);
+        if (timerText) timerText.style.display = 'none';
+        if (resendBtn) resendBtn.style.display = 'inline';
+      }
+    }, 1000);
+  }
+
+  // Verify Phone OTP
+  window.handleVerifyPhoneOtp = async function () {
+    const code = getEnteredOtp();
+    const alertBox = document.getElementById('authAlertBoxPhone');
+    const verifyBtn = document.getElementById('btnVerifyPhoneOtp');
+    const nameInput = document.getElementById('phoneCustomerName');
+    const customerName = nameInput ? nameInput.value.trim() : '';
+
+    if (!code || code.length < 6) {
+      if (alertBox) {
+        alertBox.className = 'auth-alert-box error';
+        alertBox.textContent = 'Please enter the complete 6-digit OTP code.';
+        alertBox.style.display = 'block';
+      }
+      return;
+    }
+
+    if (alertBox) alertBox.style.display = 'none';
+    if (verifyBtn) {
+      verifyBtn.disabled = true;
+      verifyBtn.innerHTML = '<span>⏳ Verifying OTP...</span>';
+    }
+
+    try {
+      const res = await fetch(`${AUTH_API_URL}/verify-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contact: currentActivePhone,
+          code: code,
+          name: customerName
+        })
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        // Save real-time user session
+        localStorage.setItem('stylito_token', data.token);
+        localStorage.setItem('stylito_user', JSON.stringify(data.user));
+
+        updateAuthUI(data.user);
+        window.closePhoneOtpView();
+        window.closeStylishAuthModal();
+        window.dismissSmsBanner();
+
+        showToast(`🎉 Mobile number ${currentActivePhone} verified! Welcome to Stylito!`);
+      } else {
+        if (alertBox) {
+          alertBox.className = 'auth-alert-box error';
+          alertBox.textContent = data.message || 'Invalid or expired OTP code.';
+          alertBox.style.display = 'block';
+        }
+      }
+    } catch (err) {
+      console.error('Verify OTP network error:', err);
+      if (alertBox) {
+        alertBox.className = 'auth-alert-box error';
+        alertBox.textContent = 'Network error verifying OTP code.';
+        alertBox.style.display = 'block';
+      }
+    } finally {
+      if (verifyBtn) {
+        verifyBtn.disabled = false;
+        verifyBtn.innerHTML = '<span>Verify &amp; Continue</span>';
+      }
+    }
+  };
+
+  // OTP Digit Box Keyboard & Input Navigation
+  document.addEventListener('input', (e) => {
+    if (e.target && e.target.classList.contains('otp-digit-box')) {
+      const input = e.target;
+      const val = input.value.replace(/[^0-9]/g, '');
+      input.value = val ? val.charAt(val.length - 1) : '';
+
+      if (input.value) {
+        input.classList.add('filled');
+        const nextIdx = parseInt(input.getAttribute('data-idx'), 10) + 1;
+        const nextInput = document.querySelector(`.otp-digit-box[data-idx="${nextIdx}"]`);
+        if (nextInput) {
+          nextInput.focus();
+        } else {
+          // If all 6 digits filled, auto-verify
+          const code = getEnteredOtp();
+          if (code.length === 6) {
+            window.handleVerifyPhoneOtp();
+          }
+        }
+      } else {
+        input.classList.remove('filled');
+      }
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.target && e.target.classList.contains('otp-digit-box')) {
+      const input = e.target;
+      const currentIdx = parseInt(input.getAttribute('data-idx'), 10);
+
+      if (e.key === 'Backspace') {
+        if (!input.value && currentIdx > 0) {
+          const prevInput = document.querySelector(`.otp-digit-box[data-idx="${currentIdx - 1}"]`);
+          if (prevInput) {
+            prevInput.focus();
+            prevInput.value = '';
+            prevInput.classList.remove('filled');
+          }
+        } else {
+          input.classList.remove('filled');
+        }
+      } else if (e.key === 'ArrowLeft' && currentIdx > 0) {
+        const prevInput = document.querySelector(`.otp-digit-box[data-idx="${currentIdx - 1}"]`);
+        if (prevInput) prevInput.focus();
+      } else if (e.key === 'ArrowRight' && currentIdx < 5) {
+        const nextInput = document.querySelector(`.otp-digit-box[data-idx="${currentIdx + 1}"]`);
+        if (nextInput) nextInput.focus();
+      }
+    }
+  });
+
+  document.addEventListener('paste', (e) => {
+    if (e.target && e.target.classList.contains('otp-digit-box')) {
+      e.preventDefault();
+      const pasteData = (e.clipboardData || window.clipboardData).getData('text');
+      const cleanDigits = pasteData.replace(/[^0-9]/g, '').slice(0, 6);
+      if (cleanDigits) {
+        const inputs = document.querySelectorAll('.otp-digit-box');
+        inputs.forEach((inp, i) => {
+          inp.value = cleanDigits[i] || '';
+          if (inp.value) inp.classList.add('filled');
+          else inp.classList.remove('filled');
+        });
+        if (cleanDigits.length === 6) {
+          window.handleVerifyPhoneOtp();
+        } else {
+          const nextFocus = document.querySelector(`.otp-digit-box[data-idx="${cleanDigits.length}"]`);
+          if (nextFocus) nextFocus.focus();
+        }
+      }
+    }
+  });
+
   // Close dropdown on click outside & Escape key handler
   document.addEventListener('click', (e) => {
     const userBadge = document.getElementById('headerUserBadge');
@@ -1178,6 +1612,8 @@
       window.closeStylishAuthModal();
       window.closeUserDropdown();
       window.closePlayStoreModal();
+      window.closeGoogleAuthModal();
+      window.dismissSmsBanner();
     }
   });
 
