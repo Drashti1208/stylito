@@ -910,16 +910,43 @@
       alertBox.textContent = '';
     }
 
-    if (modal) modal.classList.add('active');
+    // Dynamic origin calculation from LOGIN button to center of viewport
+    const triggerBtn = document.getElementById('openStylishAuthBtn');
+    if (triggerBtn && modal) {
+      const rect = triggerBtn.getBoundingClientRect();
+      const originX = (rect.left + rect.width / 2) - (window.innerWidth / 2);
+      const originY = (rect.top + rect.height / 2) - (window.innerHeight / 2);
+      modal.style.setProperty('--origin-x', `${Math.round(originX)}px`);
+      modal.style.setProperty('--origin-y', `${Math.round(originY)}px`);
+    }
+
     if (backdrop) backdrop.classList.add('active');
     document.body.style.overflow = 'hidden';
 
+    // Switch tab first so correct face is visible
     window.switchStylishAuthTab(tab);
+
+    if (modal) {
+      requestAnimationFrame(() => {
+        modal.classList.add('active');
+      });
+    }
   };
 
   window.closeStylishAuthModal = function () {
     const modal = document.getElementById('stylishAuthModal');
     const backdrop = document.getElementById('stylishAuthBackdrop');
+
+    // Recalculate origin so it zooms back into the LOGIN button
+    const triggerBtn = document.getElementById('openStylishAuthBtn');
+    if (triggerBtn && modal) {
+      const rect = triggerBtn.getBoundingClientRect();
+      const originX = (rect.left + rect.width / 2) - (window.innerWidth / 2);
+      const originY = (rect.top + rect.height / 2) - (window.innerHeight / 2);
+      modal.style.setProperty('--origin-x', `${Math.round(originX)}px`);
+      modal.style.setProperty('--origin-y', `${Math.round(originY)}px`);
+    }
+
     if (modal) modal.classList.remove('active');
     if (backdrop) backdrop.classList.remove('active');
     document.body.style.overflow = '';
@@ -928,8 +955,8 @@
   window.switchStylishAuthTab = function (tab) {
     const tabSignIn = document.getElementById('tabBtnSignIn');
     const tabSignUp = document.getElementById('tabBtnSignUp');
-    const formLogin = document.getElementById('formStylishLogin');
-    const formSignup = document.getElementById('formStylishSignup');
+    const flipCard = document.getElementById('stylishFlipCard');
+    const flipViewport = document.getElementById('stylishFlipViewport');
     const title = document.getElementById('stylishAuthTitle');
     const desc = document.getElementById('stylishAuthDesc');
     const alertBox = document.getElementById('authAlertBox');
@@ -939,15 +966,15 @@
     if (tab === 'signup') {
       if (tabSignUp) tabSignUp.classList.add('active');
       if (tabSignIn) tabSignIn.classList.remove('active');
-      if (formLogin) formLogin.style.display = 'none';
-      if (formSignup) formSignup.style.display = 'block';
+      if (flipCard) flipCard.classList.add('flipped');
+      if (flipViewport) flipViewport.style.minHeight = '395px';
       if (title) title.textContent = 'Create Account';
       if (desc) desc.textContent = 'Join Stylito for exclusive member perks & faster orders';
     } else {
       if (tabSignIn) tabSignIn.classList.add('active');
       if (tabSignUp) tabSignUp.classList.remove('active');
-      if (formSignup) formSignup.style.display = 'none';
-      if (formLogin) formLogin.style.display = 'block';
+      if (flipCard) flipCard.classList.remove('flipped');
+      if (flipViewport) flipViewport.style.minHeight = '320px';
       if (title) title.textContent = 'Welcome to Stylito';
       if (desc) desc.textContent = 'Sign in to sync your bag, wishlist & orders';
     }
