@@ -888,6 +888,13 @@
   // ==========================================================================
   const AUTH_API_URL = 'http://localhost:5000/api/auth';
 
+  function clearAuthAlerts() {
+    const boxLogin = document.getElementById('authAlertBoxLogin');
+    const boxSignup = document.getElementById('authAlertBoxSignup');
+    if (boxLogin) { boxLogin.style.display = 'none'; boxLogin.textContent = ''; }
+    if (boxSignup) { boxSignup.style.display = 'none'; boxSignup.textContent = ''; }
+  }
+
   window.openStylishAuthModal = function (tab = 'signin') {
     // If already logged in and clicked from mobile drawer
     try {
@@ -903,12 +910,7 @@
 
     const modal = document.getElementById('stylishAuthModal');
     const backdrop = document.getElementById('stylishAuthBackdrop');
-    const alertBox = document.getElementById('authAlertBox');
-    if (alertBox) {
-      alertBox.style.display = 'none';
-      alertBox.className = 'auth-alert-box';
-      alertBox.textContent = '';
-    }
+    clearAuthAlerts();
 
     // Dynamic origin calculation from LOGIN button to center of viewport
     const triggerBtn = document.getElementById('openStylishAuthBtn');
@@ -953,30 +955,16 @@
   };
 
   window.switchStylishAuthTab = function (tab) {
-    const tabSignIn = document.getElementById('tabBtnSignIn');
-    const tabSignUp = document.getElementById('tabBtnSignUp');
     const flipCard = document.getElementById('stylishFlipCard');
     const flipViewport = document.getElementById('stylishFlipViewport');
-    const title = document.getElementById('stylishAuthTitle');
-    const desc = document.getElementById('stylishAuthDesc');
-    const alertBox = document.getElementById('authAlertBox');
-
-    if (alertBox) alertBox.style.display = 'none';
+    clearAuthAlerts();
 
     if (tab === 'signup') {
-      if (tabSignUp) tabSignUp.classList.add('active');
-      if (tabSignIn) tabSignIn.classList.remove('active');
       if (flipCard) flipCard.classList.add('flipped');
-      if (flipViewport) flipViewport.style.minHeight = '395px';
-      if (title) title.textContent = 'Create Account';
-      if (desc) desc.textContent = 'Join Stylito for exclusive member perks & faster orders';
+      if (flipViewport) flipViewport.style.minHeight = '535px';
     } else {
-      if (tabSignIn) tabSignIn.classList.add('active');
-      if (tabSignUp) tabSignUp.classList.remove('active');
       if (flipCard) flipCard.classList.remove('flipped');
-      if (flipViewport) flipViewport.style.minHeight = '320px';
-      if (title) title.textContent = 'Welcome to Stylito';
-      if (desc) desc.textContent = 'Sign in to sync your bag, wishlist & orders';
+      if (flipViewport) flipViewport.style.minHeight = '460px';
     }
   };
 
@@ -1035,7 +1023,7 @@
 
     const email = document.getElementById('authLoginEmail').value.trim();
     const password = document.getElementById('authLoginPassword').value;
-    const alertBox = document.getElementById('authAlertBox');
+    const alertBox = document.getElementById('authAlertBoxLogin');
     const submitBtn = document.getElementById('btnSubmitLogin');
 
     if (!email || !password) {
@@ -1104,7 +1092,7 @@
     const email = document.getElementById('authSignupEmail').value.trim();
     const phone = document.getElementById('authSignupPhone').value.trim();
     const password = document.getElementById('authSignupPassword').value;
-    const alertBox = document.getElementById('authAlertBox');
+    const alertBox = document.getElementById('authAlertBoxSignup');
     const submitBtn = document.getElementById('btnSubmitSignup');
 
     if (!name || !email || !password) {

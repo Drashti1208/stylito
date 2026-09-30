@@ -1037,31 +1037,31 @@
   <aside class="stylish-auth-modal" id="stylishAuthModal" role="dialog" aria-modal="true" aria-label="Sign In or Create Account">
     <button type="button" class="stylish-auth-close" onclick="closeStylishAuthModal()" aria-label="Close">&times;</button>
 
-    <div class="stylish-auth-header">
-      <div class="stylish-auth-brand-icon">
-        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-          <circle cx="12" cy="7" r="4"></circle>
-        </svg>
-      </div>
-      <h3 class="stylish-auth-title" id="stylishAuthTitle">Welcome to Stylito</h3>
-      <p class="stylish-auth-desc" id="stylishAuthDesc">Sign in to sync your bag, wishlist &amp; orders</p>
-    </div>
-
-    <!-- Dual Segment Tab Switcher -->
-    <div class="stylish-auth-tabs">
-      <button type="button" class="auth-tab-btn active" id="tabBtnSignIn" onclick="switchStylishAuthTab('signin')">Sign In</button>
-      <button type="button" class="auth-tab-btn" id="tabBtnSignUp" onclick="switchStylishAuthTab('signup')">Sign Up</button>
-    </div>
-
-    <!-- Alert / Message Banner -->
-    <div class="auth-alert-box" id="authAlertBox" style="display:none;"></div>
-
-    <!-- 3D Two-Sided Flip Container -->
+    <!-- 3D Full Page Flip Viewport -->
     <div class="stylish-flip-viewport" id="stylishFlipViewport">
       <div class="stylish-flip-card" id="stylishFlipCard">
-        <!-- SIDE 1: FRONT (SIGN IN) -->
+
+        <!-- ================= SIDE 1: FRONT (FULL SIGN IN PAGE) ================= -->
         <div class="stylish-flip-face stylish-flip-front">
+          <div class="stylish-auth-header">
+            <div class="stylish-auth-brand-icon">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </div>
+            <h3 class="stylish-auth-title">Welcome to Stylito</h3>
+            <p class="stylish-auth-desc">Sign in to sync your bag, wishlist &amp; orders</p>
+          </div>
+
+          <!-- Tabs on Sign In page -->
+          <div class="stylish-auth-tabs">
+            <button type="button" class="auth-tab-btn active" id="tabBtnSignIn" onclick="switchStylishAuthTab('signin')">Sign In</button>
+            <button type="button" class="auth-tab-btn" id="tabBtnSignUpFromFront" onclick="switchStylishAuthTab('signup')">Sign Up</button>
+          </div>
+
+          <div class="auth-alert-box" id="authAlertBoxLogin" style="display:none;"></div>
+
           <form class="stylish-auth-form" id="formStylishLogin" onsubmit="handleStylishLoginSubmit(event)">
             <div class="auth-input-group">
               <label for="authLoginEmail">Email Address</label>
@@ -1102,8 +1102,29 @@
           </form>
         </div>
 
-        <!-- SIDE 2: BACK (SIGN UP) -->
+        <!-- ================= SIDE 2: BACK (FULL SIGN UP PAGE) ================= -->
         <div class="stylish-flip-face stylish-flip-back">
+          <div class="stylish-auth-header">
+            <div class="stylish-auth-brand-icon">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="8.5" cy="7" r="4"></circle>
+                <line x1="20" y1="8" x2="20" y2="14"></line>
+                <line x1="23" y1="11" x2="17" y2="11"></line>
+              </svg>
+            </div>
+            <h3 class="stylish-auth-title">Create Account</h3>
+            <p class="stylish-auth-desc">Join Stylito for member perks &amp; fast checkout</p>
+          </div>
+
+          <!-- Tabs on Sign Up page -->
+          <div class="stylish-auth-tabs">
+            <button type="button" class="auth-tab-btn" id="tabBtnSignInFromBack" onclick="switchStylishAuthTab('signin')">Sign In</button>
+            <button type="button" class="auth-tab-btn active" id="tabBtnSignUp" onclick="switchStylishAuthTab('signup')">Sign Up</button>
+          </div>
+
+          <div class="auth-alert-box" id="authAlertBoxSignup" style="display:none;"></div>
+
           <form class="stylish-auth-form" id="formStylishSignup" onsubmit="handleStylishSignupSubmit(event)">
             <div class="auth-input-group">
               <label for="authSignupName">Full Name</label>
@@ -1149,6 +1170,7 @@
             </div>
           </form>
         </div>
+
       </div>
     </div>
   </aside>

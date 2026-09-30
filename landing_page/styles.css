@@ -3852,14 +3852,14 @@ button {
   transform: translate(-50%, -50%) scale(1);
 }
 
-/* 3D Two-Sided Page Flip Animation (Side 1: Login, Side 2: Sign Up) */
+/* 3D Two-Sided Full Page Flip Animation (Side 1: Full Login, Side 2: Full Sign Up) */
 .stylish-flip-viewport {
   width: 100%;
   position: relative;
   perspective: 1400px;
   -webkit-perspective: 1400px;
   transition: min-height 0.45s cubic-bezier(0.16, 1, 0.3, 1);
-  min-height: 310px;
+  min-height: 460px;
 }
 
 .stylish-flip-card {
@@ -3867,7 +3867,7 @@ button {
   position: relative;
   transform-style: preserve-3d;
   -webkit-transform-style: preserve-3d;
-  transition: transform 0.8s cubic-bezier(0.34, 1.15, 0.64, 1);
+  transition: transform 0.85s cubic-bezier(0.34, 1.15, 0.64, 1);
 }
 
 .stylish-flip-card.flipped {
@@ -3926,6 +3926,7 @@ button {
   align-items: center;
   justify-content: center;
   transition: all 0.18s ease;
+  z-index: 10;
 }
 
 .stylish-auth-close:hover {
