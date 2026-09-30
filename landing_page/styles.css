@@ -344,65 +344,77 @@ button {
 .hero-section {
   position: relative;
   overflow: hidden;
-  padding: 68px 0 115px;
-  min-height: 560px;
-  background: url('assets/images/hero_hd_pink_bg.jpg') center bottom / cover no-repeat;
+  padding: 85px 0 95px;
+  min-height: 580px;
+  background: url('assets/images/hero_flatlay_vacation_hd.jpg') center center / cover no-repeat;
   color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .hero-container {
-  max-width: 1560px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 0 40px;
+  padding: 0 32px;
+  width: 100%;
+  position: relative;
+  z-index: 2;
+}
+
+.hero-centered-layout {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100%;
 }
 
-.hero-grid {
-  display: grid;
-  grid-template-columns: 1fr 1.3fr;
-  gap: 48px;
+.hero-content-cinematic {
+  max-width: 760px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  position: relative;
-}
-
-.hero-content {
-  padding-right: 16px;
-  animation: heroFadeInLeft 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: heroFadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) both, heroFloatGentle 6s ease-in-out infinite 1s;
+  will-change: transform;
 }
 
 .hero-eyebrow {
   display: inline-block;
-  font-size: 0.76rem;
+  font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: #FFFFFF;
-  background-color: rgba(255, 255, 255, 0.22);
-  padding: 6px 16px;
-  border-radius: 20px;
-  backdrop-filter: blur(8px);
-  margin-bottom: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.3);
+  padding: 8px 22px;
+  border-radius: 30px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  margin-bottom: 22px;
+  border: 1.5px solid rgba(255, 255, 255, 0.65);
+  box-shadow: 0 6px 20px rgba(180, 45, 75, 0.16);
+  animation: heroBadgePulse 3.5s ease-in-out infinite;
 }
 
 .hero-title {
   font-family: var(--font-serif);
-  font-size: clamp(2.6rem, 5vw, 4.3rem);
-  font-weight: 500;
-  line-height: 1.1;
+  font-size: clamp(2.8rem, 5.8vw, 4.8rem);
+  font-weight: 600;
+  line-height: 1.12;
   letter-spacing: -0.01em;
   color: #FFFFFF;
   margin-bottom: 22px;
-  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  text-shadow: 0 4px 24px rgba(180, 40, 75, 0.35), 0 2px 6px rgba(0, 0, 0, 0.18);
 }
 
 .hero-subtitle {
-  font-size: 1.05rem;
-  color: rgba(255, 255, 255, 0.94);
-  line-height: 1.65;
+  font-size: 1.15rem;
+  color: rgba(255, 255, 255, 0.98);
+  line-height: 1.7;
   margin-bottom: 34px;
-  max-width: 460px;
-  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  text-shadow: 0 2px 12px rgba(160, 40, 70, 0.3);
 }
 
 .hero-section .btn-primary {
@@ -542,6 +554,35 @@ button {
   100% {
     opacity: 0.8;
     transform: scale(1.08);
+  }
+}
+
+@keyframes heroFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes heroFloatGentle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
+}
+
+@keyframes heroBadgePulse {
+  0%, 100% {
+    box-shadow: 0 4px 16px rgba(180, 45, 75, 0.16);
+  }
+  50% {
+    box-shadow: 0 6px 24px rgba(255, 255, 255, 0.5);
   }
 }
 
@@ -2650,18 +2691,22 @@ button {
   background: #d1fae5;
 }
 
-/* Hero Section Actions (SHOP NEW ARRIVALS on top, Google Play directly underneath) */
+/* Hero Section Actions (Centered Luxury Presentation) */
 .hero-actions-wrap {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 16px;
-  margin-top: 24px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 26px;
+  flex-wrap: wrap;
 }
 
 @media (max-width: 768px) {
   .hero-actions-wrap {
+    flex-direction: column;
     align-items: center;
+    gap: 14px;
   }
 }
 
