@@ -1045,14 +1045,18 @@
   window.switchStylishAuthTab = function (tab) {
     const flipCard = document.getElementById('stylishFlipCard');
     const flipViewport = document.getElementById('stylishFlipViewport');
+    const frontFace = document.querySelector('.stylish-flip-front');
+    const backFace = document.querySelector('.stylish-flip-back');
     clearAuthAlerts();
 
     if (tab === 'signup') {
       if (flipCard) flipCard.classList.add('flipped');
-      if (flipViewport) flipViewport.style.minHeight = '465px';
+      const backH = backFace ? Math.max(backFace.scrollHeight, backFace.offsetHeight) : 585;
+      if (flipViewport) flipViewport.style.minHeight = `${Math.max(backH, 585)}px`;
     } else {
       if (flipCard) flipCard.classList.remove('flipped');
-      if (flipViewport) flipViewport.style.minHeight = '375px';
+      const frontH = frontFace ? Math.max(frontFace.scrollHeight, frontFace.offsetHeight) : 480;
+      if (flipViewport) flipViewport.style.minHeight = `${Math.max(frontH, 480)}px`;
     }
   };
 
@@ -1478,11 +1482,14 @@
   };
 
   window.closePhoneOtpView = function () {
+    const flipCard = document.getElementById('stylishFlipCard');
     const flipViewport = document.getElementById('stylishFlipViewport');
     const phoneViewport = document.getElementById('stylishPhoneOtpViewport');
     if (phoneViewport) phoneViewport.style.display = 'none';
     if (flipViewport) flipViewport.style.display = 'block';
     if (otpCountdownTimer) clearInterval(otpCountdownTimer);
+    const isSignup = flipCard && flipCard.classList.contains('flipped');
+    window.switchStylishAuthTab(isSignup ? 'signup' : 'signin');
   };
 
   window.editPhoneNumber = function () {
