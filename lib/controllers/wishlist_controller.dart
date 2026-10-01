@@ -4,16 +4,6 @@ import '../models/product_model.dart';
 class WishlistController extends GetxController {
   final RxList<ProductModel> items = <ProductModel>[].obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-    // Default initial items
-    final samples = ProductModel.sampleProducts;
-    if (samples.length >= 2) {
-      items.addAll([samples[0], samples[1]]);
-    }
-  }
-
   bool isWishlisted(String productId) {
     return items.any((item) => item.id == productId);
   }

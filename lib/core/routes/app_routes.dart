@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../views/auth/forgot_password_screen.dart';
+import '../../views/auth/otp_verification_screen.dart';
 import '../../views/auth/sign_in_screen.dart';
 import '../../views/auth/sign_up_screen.dart';
 import '../../views/cart/checkout_screen.dart';
@@ -12,16 +13,18 @@ import '../../views/catalog/kids_products_screen.dart';
 import '../../views/catalog/mens_products_screen.dart';
 import '../../views/catalog/trending_products_screen.dart';
 import '../../views/catalog/womens_products_screen.dart';
-import '../../views/home/stylish_website_view.dart';
+import '../../views/landing/landing_page_screen.dart';
 import '../../views/main_navigation_screen.dart';
 import '../../views/onboarding/get_started_screen.dart';
 import '../../views/onboarding/onboarding_screen.dart';
-import '../../views/auth/otp_verification_screen.dart';
+import '../../main.dart';
 import '../../views/profile/profile_screen.dart';
 import '../../views/splash/splash_screen.dart';
 
 class AppRoutes {
-  static const String splash = '/';
+  static const String root = '/';
+  static const String splash = '/splash';
+  static const String landing = '/landing';
   static const String onboarding = '/onboarding';
   static const String getStarted = '/get-started';
   static const String signIn = '/signin';
@@ -43,7 +46,9 @@ class AppRoutes {
   static const String website = '/website';
 
   static Map<String, WidgetBuilder> get routes => {
+        root: (context) => const AppPlatformRouter(),
         splash: (context) => const SplashScreen(),
+        landing: (context) => const LandingPageScreen(),
         onboarding: (context) => const OnboardingScreen(),
         getStarted: (context) => const GetStartedScreen(),
         signIn: (context) => const SignInScreen(),
@@ -68,6 +73,6 @@ class AppRoutes {
         checkout: (context) => const CheckoutScreen(),
         payment: (context) => const PaymentScreen(),
         profile: (context) => const ProfileScreen(showBackButton: true),
-        website: (context) => const StylishWebsiteView(),
+        website: (context) => const LandingPageScreen(),
       };
 }

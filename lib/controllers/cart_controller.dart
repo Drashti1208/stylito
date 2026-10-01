@@ -8,23 +8,6 @@ class CartController extends GetxController {
   final RxDouble _discountPercent = 0.0.obs;
   final RxDouble _deliveryFee = 0.0.obs; // Free delivery as per Figma
 
-  @override
-  void onInit() {
-    super.onInit();
-    _initDefaultItems();
-  }
-
-  void _initDefaultItems() {
-    final samples = ProductModel.sampleProducts;
-    final item1 = samples.firstWhere((p) => p.id == 'womens_casual_wear', orElse: () => samples[0]);
-    final item2 = samples.firstWhere((p) => p.id == 'mens_jacket', orElse: () => samples[1]);
-
-    items.addAll([
-      CartItemModel(product: item1, selectedSize: '42', selectedColor: 'Black', quantity: 1),
-      CartItemModel(product: item2, selectedSize: 'M', selectedColor: 'Green', quantity: 1),
-    ]);
-  }
-
   int get itemCount => items.fold(0, (sum, item) => sum + item.quantity);
 
   String? get appliedCoupon => _appliedCoupon.value;

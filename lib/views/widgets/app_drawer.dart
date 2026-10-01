@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/routes/app_routes.dart';
+import '../../core/utils/app_launcher.dart';
+import 'contact_and_store_details_sheet.dart';
 import 'stylish_logo.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -141,15 +143,30 @@ class AppDrawer extends StatelessWidget {
           ),
           const Divider(),
           ListTile(
-            leading: const Icon(Icons.language, color: AppColors.primary),
+            leading: const Icon(Icons.mail_outline, color: AppColors.primary),
             title: const Text(
-              'Desktop Website View',
+              'Email Support',
               style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.textDark),
             ),
-            subtitle: const Text('View website layout format'),
+            subtitle: const Text('support@stylito.com'),
             onTap: () {
               Navigator.pop(context);
-              Navigator.pushNamed(context, AppRoutes.website);
+              AppLauncher.launchEmail(
+                email: 'support@stylito.com',
+                subject: 'Stylito Mobile App Support Request',
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.support_agent_outlined, color: AppColors.primary),
+            title: const Text(
+              'Contact & Store Info',
+              style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.textDark),
+            ),
+            subtitle: const Text('Direct message & store location'),
+            onTap: () {
+              Navigator.pop(context);
+              ContactAndStoreDetailsSheet.show(context);
             },
           ),
           const Divider(),

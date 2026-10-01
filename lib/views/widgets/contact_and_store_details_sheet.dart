@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../controllers/inquiry_controller.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_text_styles.dart';
+import '../../core/utils/app_launcher.dart';
 
 class ContactAndStoreDetailsSheet extends StatefulWidget {
   const ContactAndStoreDetailsSheet({super.key});
@@ -185,12 +186,17 @@ class _ContactAndStoreDetailsSheetState
           icon: '📞',
           title: 'PHONE & HELPLINE',
           subtitle: '+91 98765 43210 \u2022 Toll-Free: 1800-STYLISH',
+          onTap: () => AppLauncher.launchPhone('+919876543210'),
         ),
         const SizedBox(height: 10),
         _infoCard(
           icon: '✉️',
           title: 'EMAIL SUPPORT',
-          subtitle: 'support@stylishfashion.com / contact@stylito.com',
+          subtitle: 'support@stylishfashion.com / contact@stylito.com\n(Tap to compose mail)',
+          onTap: () => AppLauncher.launchEmail(
+            email: 'support@stylito.com',
+            subject: 'Stylito Support Inquiry',
+          ),
         ),
         const SizedBox(height: 10),
         _infoCard(
@@ -199,52 +205,59 @@ class _ContactAndStoreDetailsSheetState
           subtitle: 'Mon \u2013 Sat: 9:00 AM \u2013 8:00 PM IST\nSunday: 10:00 AM \u2013 5:00 PM IST',
         ),
         const SizedBox(height: 10),
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: const Color(0xFFFFF0F2),
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: AppColors.primary.withValues(alpha: 0.25)),
+        InkWell(
+          borderRadius: BorderRadius.circular(10),
+          onTap: () => AppLauncher.launchEmail(
+            email: 'support@stylito.com',
+            subject: 'Stylito WhatsApp / Online Concierge Inquiry',
           ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 36,
-                height: 36,
-                decoration: const BoxDecoration(
-                  color: Color(0xFF25D366),
-                  shape: BoxShape.circle,
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFF0F2),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: AppColors.primary.withValues(alpha: 0.25)),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF25D366),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Center(
+                    child: Text('💬', style: TextStyle(fontSize: 16)),
+                  ),
                 ),
-                child: const Center(
-                  child: Text('💬', style: TextStyle(fontSize: 16)),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'DIRECT WHATSAPP SUPPORT',
-                      style: GoogleFonts.montserrat(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        color: const Color(0xFF1B1B1B),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'DIRECT SUPPORT / CONCIERGE',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xFF1B1B1B),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 3),
-                    Text(
-                      'Chat directly with our personal stylist & care team.',
-                      style: GoogleFonts.montserrat(
-                        fontSize: 11,
-                        color: const Color(0xFF555555),
+                      const SizedBox(height: 3),
+                      Text(
+                        'Tap here to directly contact our personal stylist & support team.',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 11,
+                          color: const Color(0xFF555555),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ],
@@ -255,60 +268,70 @@ class _ContactAndStoreDetailsSheetState
     required String icon,
     required String title,
     required String subtitle,
+    VoidCallback? onTap,
   }) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF9F9F9),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xFFEEEEEE)),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 4,
-                ),
-              ],
-            ),
-            child: Center(
-              child: Text(icon, style: const TextStyle(fontSize: 16)),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: GoogleFonts.montserrat(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    color: const Color(0xFF1B1B1B),
+    return InkWell(
+      borderRadius: BorderRadius.circular(10),
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF9F9F9),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: const Color(0xFFEEEEEE)),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 4,
                   ),
-                ),
-                const SizedBox(height: 3),
-                Text(
-                  subtitle,
-                  style: GoogleFonts.montserrat(
-                    fontSize: 11,
-                    color: const Color(0xFF666666),
-                    height: 1.35,
-                  ),
-                ),
-              ],
+                ],
+              ),
+              child: Center(
+                child: Text(icon, style: const TextStyle(fontSize: 16)),
+              ),
             ),
-          ),
-        ],
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: const Color(0xFF1B1B1B),
+                    ),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    subtitle,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 11,
+                      color: const Color(0xFF666666),
+                      height: 1.35,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (onTap != null)
+              const Padding(
+                padding: EdgeInsets.only(top: 8.0),
+                child: Icon(Icons.arrow_forward_ios, size: 14, color: AppColors.primary),
+              ),
+          ],
+        ),
       ),
     );
   }

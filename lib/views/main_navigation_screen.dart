@@ -130,13 +130,13 @@ class MainNavigationScreen extends StatelessWidget {
               ),
             ),
           ),
-          Obx(() {
-            final badgeCount = cartController.itemCount;
-            if (badgeCount <= 0) return const SizedBox.shrink();
-            return Positioned(
-              top: -2,
-              right: -2,
-              child: Container(
+          Positioned(
+            top: -2,
+            right: -2,
+            child: Obx(() {
+              final badgeCount = cartController.itemCount;
+              if (badgeCount <= 0) return const SizedBox.shrink();
+              return Container(
                 padding: const EdgeInsets.all(4),
                 decoration: const BoxDecoration(
                   color: AppColors.primary,
@@ -150,9 +150,9 @@ class MainNavigationScreen extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-              ),
-            );
-          }),
+              );
+            }),
+          ),
         ],
       ),
     );

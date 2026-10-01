@@ -3,8 +3,6 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../controllers/auth_controller.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import '../../core/constants/app_colors.dart';
-import '../../core/routes/app_routes.dart';
 
 class GoogleAccountItem {
   final String name;
@@ -118,17 +116,24 @@ class _GoogleAccountPickerSheetState extends State<GoogleAccountPickerSheet> {
           avatarUrl: account.photoUrl,
         );
         if (success) {
-          Get.snackbar(
-            'Google Sign-In',
-            'Welcome, ${authController.userProfile.name}!',
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: AppColors.success,
-            colorText: Colors.white,
+          Get.rawSnackbar(
+            titleText: Text(
+              'Google Sign-In',
+              style: GoogleFonts.montserrat(fontWeight: FontWeight.w800, color: Colors.white, fontSize: 13.5),
+            ),
+            messageText: Text(
+              'Welcome, ${authController.userProfile.name}!',
+              style: GoogleFonts.montserrat(color: Colors.white70, fontSize: 12),
+            ),
+            icon: const Icon(Icons.check_circle_outline, color: Color(0xFF4ADE80), size: 22),
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: const Color(0xFF1E1E24),
+            margin: const EdgeInsets.only(top: 18, left: 24, right: 24),
+            borderRadius: 12,
+            duration: const Duration(seconds: 3),
           );
           if (widget.onSuccess != null) {
             widget.onSuccess!();
-          } else {
-            Get.offAllNamed(AppRoutes.main);
           }
         }
       }
@@ -150,33 +155,43 @@ class _GoogleAccountPickerSheetState extends State<GoogleAccountPickerSheet> {
     );
 
     if (success) {
-      Get.snackbar(
-        'Google Sign-In',
-        'Signed in as ${account.name} (${account.email})',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: AppColors.success,
-        colorText: Colors.white,
-        icon: const Icon(Icons.check_circle, color: Colors.white),
-        margin: const EdgeInsets.all(16),
+      Get.rawSnackbar(
+        titleText: Text(
+          'Google Sign-In',
+          style: GoogleFonts.montserrat(fontWeight: FontWeight.w800, color: Colors.white, fontSize: 13.5),
+        ),
+        messageText: Text(
+          'Signed in as ${account.name} (${account.email})',
+          style: GoogleFonts.montserrat(color: Colors.white70, fontSize: 12),
+        ),
+        icon: const Icon(Icons.check_circle_outline, color: Color(0xFF4ADE80), size: 22),
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: const Color(0xFF1E1E24),
+        margin: const EdgeInsets.only(top: 18, left: 24, right: 24),
+        borderRadius: 12,
         duration: const Duration(seconds: 3),
       );
 
       if (widget.onSuccess != null) {
         widget.onSuccess!();
-      } else {
-        Get.offAllNamed(AppRoutes.main);
       }
     } else {
-      Get.snackbar(
-        'Google Sign-In',
-        authController.authMessage.value.isNotEmpty
-            ? authController.authMessage.value
-            : 'Google Sign-In failed',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: AppColors.error,
-        colorText: Colors.white,
-        icon: const Icon(Icons.error_outline, color: Colors.white),
-        margin: const EdgeInsets.all(16),
+      Get.rawSnackbar(
+        titleText: Text(
+          'Google Sign-In Failed',
+          style: GoogleFonts.montserrat(fontWeight: FontWeight.w800, color: Colors.white, fontSize: 13.5),
+        ),
+        messageText: Text(
+          authController.authMessage.value.isNotEmpty
+              ? authController.authMessage.value
+              : 'Google Sign-In could not be completed.',
+          style: GoogleFonts.montserrat(color: Colors.white70, fontSize: 12),
+        ),
+        icon: const Icon(Icons.error_outline, color: Color(0xFFF87171), size: 22),
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: const Color(0xFF1E1E24),
+        margin: const EdgeInsets.only(top: 18, left: 24, right: 24),
+        borderRadius: 12,
         duration: const Duration(seconds: 3),
       );
     }
@@ -187,11 +202,21 @@ class _GoogleAccountPickerSheetState extends State<GoogleAccountPickerSheet> {
     final name = _customNameController.text.trim();
 
     if (email.isEmpty || !email.contains('@')) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter a valid Google email address'),
-          backgroundColor: AppColors.error,
+      Get.rawSnackbar(
+        titleText: Text(
+          'Invalid Gmail',
+          style: GoogleFonts.montserrat(fontWeight: FontWeight.w800, color: Colors.white, fontSize: 13.5),
         ),
+        messageText: Text(
+          'Please enter a valid Google email address.',
+          style: GoogleFonts.montserrat(color: Colors.white70, fontSize: 12),
+        ),
+        icon: const Icon(Icons.error_outline, color: Color(0xFFF87171), size: 22),
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: const Color(0xFF1E1E24),
+        margin: const EdgeInsets.only(top: 18, left: 24, right: 24),
+        borderRadius: 12,
+        duration: const Duration(seconds: 3),
       );
       return;
     }

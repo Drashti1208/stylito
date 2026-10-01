@@ -196,12 +196,12 @@ class _MensProductsScreenState extends State<MensProductsScreen> {
                   Navigator.pushNamed(context, AppRoutes.cart);
                 },
               ),
-              Obx(() {
-                if (cartProvider.itemCount <= 0) return const SizedBox.shrink();
-                return Positioned(
-                  top: 8,
-                  right: 8,
-                  child: Container(
+              Positioned(
+                top: 8,
+                right: 8,
+                child: Obx(() {
+                  if (cartProvider.itemCount <= 0) return const SizedBox.shrink();
+                  return Container(
                     padding: const EdgeInsets.all(4),
                     decoration: const BoxDecoration(
                       color: AppColors.primary,
@@ -215,9 +215,9 @@ class _MensProductsScreenState extends State<MensProductsScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ),
-                );
-              }),
+                  );
+                }),
+              ),
             ],
           ),
           const SizedBox(width: 4),
