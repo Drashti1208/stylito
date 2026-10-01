@@ -1045,19 +1045,14 @@
   window.switchStylishAuthTab = function (tab) {
     const flipCard = document.getElementById('stylishFlipCard');
     const flipViewport = document.getElementById('stylishFlipViewport');
-    const frontFace = document.querySelector('.stylish-flip-front');
-    const backFace = document.querySelector('.stylish-flip-back');
     clearAuthAlerts();
 
     if (tab === 'signup') {
       if (flipCard) flipCard.classList.add('flipped');
-      const backH = backFace ? Math.max(backFace.scrollHeight, backFace.offsetHeight) : 585;
-      if (flipViewport) flipViewport.style.minHeight = `${Math.max(backH, 585)}px`;
     } else {
       if (flipCard) flipCard.classList.remove('flipped');
-      const frontH = frontFace ? Math.max(frontFace.scrollHeight, frontFace.offsetHeight) : 480;
-      if (flipViewport) flipViewport.style.minHeight = `${Math.max(frontH, 480)}px`;
     }
+    if (flipViewport) flipViewport.style.minHeight = '';
   };
 
   // ==========================================================================
