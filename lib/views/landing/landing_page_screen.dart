@@ -36,7 +36,6 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
   final ScrollController _mainScrollController = ScrollController();
   final GlobalKey _newArrivalsKey = GlobalKey();
   final GlobalKey _categoryKey = GlobalKey();
-  final GlobalKey _promoSaleKey = GlobalKey();
   final GlobalKey _contactKey = GlobalKey();
 
   String _selectedCategory = 'ALL';
@@ -594,7 +593,6 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
             KeyedSubtree(key: _categoryKey, child: _buildCategorySelector(screenWidth)),
             KeyedSubtree(key: _newArrivalsKey, child: _buildFeaturedProducts(screenWidth)),
             _buildTrustStrip(screenWidth),
-            KeyedSubtree(key: _promoSaleKey, child: _buildPromoSplitBanner(screenWidth)),
             KeyedSubtree(key: _contactKey, child: _buildContactSection(screenWidth)),
             _buildLuxuryFooter(screenWidth),
           ],
@@ -714,8 +712,8 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
                     title: 'SALE',
                     isActive: _activeNavTab == 'SALE',
                     onTap: () {
-                      _scrollToKey(_promoSaleKey, navTab: 'SALE');
-                      _scrollToCategory('ALL');
+                      _scrollToKey(_newArrivalsKey, navTab: 'SALE');
+                      _scrollToCategory('Sale');
                     },
                   ),
                   _CleanNavLink(
@@ -1595,211 +1593,6 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
                 );
               }
             },
-          ),
-        ),
-      ),
-    );
-  }
-
-  // ==========================================
-  // 7. PROMOTIONAL SPLIT BANNER (SUMMER REFRESH)
-  // ==========================================
-  Widget _buildPromoSplitBanner(double screenWidth) {
-    final isWide = screenWidth > 768;
-
-    return Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 1380),
-        child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 32),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(24),
-            color: const Color(0xFFFFF0F2),
-            border: Border.all(color: const Color(0xFFF7D8DE)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.04),
-                blurRadius: 16,
-                offset: const Offset(0, 6),
-              ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(24),
-            child: isWide
-                ? Row(
-                    children: [
-                      // Left Visual Image
-                      Expanded(
-                        flex: 5,
-                        child: SizedBox(
-                          height: 380,
-                          child: Image.asset(
-                            'assets/images/hot_summer_sale.png',
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) => Container(
-                              color: const Color(0xFFFDE8EC),
-                              child: const Center(
-                                child: Icon(Icons.shopping_bag, size: 64, color: AppColors.primary),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      // Right Content Card
-                      Expanded(
-                        flex: 6,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 40),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(color: const Color(0xFFF7D8DE)),
-                                ),
-                                child: Text(
-                                  'LIMITED TIME ONLY',
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: 10.5,
-                                    fontWeight: FontWeight.w700,
-                                    letterSpacing: 1.5,
-                                    color: AppColors.primary,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 18),
-                              Text(
-                                'Summer Refresh',
-                                style: GoogleFonts.playfairDisplay(
-                                  fontSize: 34,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.textDark,
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              Text(
-                                'Enjoy up to 30% off selected styles across dresses, lightweight tops, and summer accessories.',
-                                style: GoogleFonts.montserrat(
-                                  fontSize: 14,
-                                  color: AppColors.textMuted,
-                                  height: 1.5,
-                                ),
-                              ),
-                              const SizedBox(height: 26),
-                              ElevatedButton(
-                                onPressed: () {
-                                  _scrollToCategory('womens');
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.primary,
-                                  foregroundColor: Colors.white,
-                                  minimumSize: const Size(0, 46),
-                                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
-                                  elevation: 2,
-                                ),
-                                child: Text(
-                                  'SHOP THE SALE',
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: 12.5,
-                                    fontWeight: FontWeight.w700,
-                                    letterSpacing: 1.0,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  )
-                : Column(
-                    children: [
-                      SizedBox(
-                        height: 240,
-                        width: double.infinity,
-                        child: Image.asset(
-                          'assets/images/hot_summer_sale.png',
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) => Container(
-                            color: const Color(0xFFFDE8EC),
-                            child: const Center(
-                              child: Icon(Icons.shopping_bag, size: 48, color: AppColors.primary),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(28),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(color: const Color(0xFFF7D8DE)),
-                              ),
-                              child: Text(
-                                'LIMITED TIME ONLY',
-                                style: GoogleFonts.montserrat(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: 1.5,
-                                  color: AppColors.primary,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 14),
-                            Text(
-                              'Summer Refresh',
-                              style: GoogleFonts.playfairDisplay(
-                                fontSize: 26,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.textDark,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Enjoy up to 30% off selected styles.',
-                              style: GoogleFonts.montserrat(
-                                fontSize: 13,
-                                color: AppColors.textMuted,
-                                height: 1.4,
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            ElevatedButton(
-                              onPressed: () {
-                                _scrollToCategory('womens');
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.primary,
-                                foregroundColor: Colors.white,
-                                minimumSize: const Size(0, 44),
-                                padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 12),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
-                              ),
-                              child: Text(
-                                'SHOP THE SALE',
-                                style: GoogleFonts.montserrat(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: 0.8,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
           ),
         ),
       ),

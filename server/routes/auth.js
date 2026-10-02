@@ -132,37 +132,11 @@ router.post('/send-otp', async (req, res) => {
     console.log(`   OTP Code:    ${otpCode}`);
     console.log(`   Valid For:   10 Minutes`);
 
-    // Real SMS Carrier Dispatch (Fast2SMS, Twilio, MSG91)
+    // Real SMS Carrier Dispatch (Twilio, MSG91)
     let realSmsSent = false;
     let smsProviderUsed = 'Simulated/SQLite';
 
-    // 1. Fast2SMS Provider (India)
-    if (process.env.FAST2SMS_API_KEY) {
-      const rawDigits = cleanedContact.replace(/[^0-9]/g, '').slice(-10);
-      try {
-        const smsRes = await fetch('https://www.fast2sms.com/dev/bulkV2', {
-          method: 'POST',
-          headers: {
-            'authorization': process.env.FAST2SMS_API_KEY,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            route: 'otp',
-            variables_values: otpCode,
-            numbers: rawDigits
-          })
-        });
-        const smsData = await smsRes.json();
-        console.log(`📡 Fast2SMS Gateway Response:`, smsData);
-        if (smsData.return === true) {
-          realSmsSent = true;
-          smsProviderUsed = 'Fast2SMS';
-        }
-      } catch (smsErr) {
-        console.warn('⚠️ Fast2SMS dispatch warning:', smsErr.message);
-      }
-    }
-    // 2. Twilio SMS Provider (Global)
+    // 1. Twilio SMS Provider (Global)
     else if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_PHONE_NUMBER) {
       try {
         const formattedPhone = cleanedContact.startsWith('+') ? cleanedContact : `+91${cleanedContact.replace(/[^0-9]/g, '').slice(-10)}`;
