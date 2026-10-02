@@ -1,40 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../controllers/auth_controller.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-
-class GoogleAccountItem {
-  final String name;
-  final String email;
-  final String? avatarUrl;
-  final Color avatarColor;
-
-  const GoogleAccountItem({
-    required this.name,
-    required this.email,
-    this.avatarUrl,
-    required this.avatarColor,
-  });
-}
+import '../../controllers/auth_controller.dart';
+import '../../core/constants/app_colors.dart';
 
 class GoogleAccountPickerSheet extends StatefulWidget {
   final VoidCallback? onSuccess;
 
   const GoogleAccountPickerSheet({super.key, this.onSuccess});
 
-  /// Opens as bottom sheet on mobile or centered dialog on desktop/tablet
+  /// Opens as centered dialog on desktop/web or bottom sheet on mobile
   static void show(BuildContext context, {VoidCallback? onSuccess}) {
-    final isDesktop = MediaQuery.of(context).size.width > 700;
+    final isDesktop = MediaQuery.of(context).size.width > 600;
 
     if (isDesktop) {
       showDialog(
         context: context,
+        barrierDismissible: true,
+        barrierColor: Colors.black.withValues(alpha: 0.55),
         builder: (_) => Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           backgroundColor: Colors.transparent,
+          elevation: 0,
+          insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
           child: Container(
-            constraints: const BoxConstraints(maxWidth: 440),
+            constraints: const BoxConstraints(maxWidth: 390),
             child: GoogleAccountPickerSheet(onSuccess: onSuccess),
           ),
         ),
@@ -44,7 +35,10 @@ class GoogleAccountPickerSheet extends StatefulWidget {
         context: context,
         isScrollControlled: true,
         backgroundColor: Colors.transparent,
-        builder: (_) => GoogleAccountPickerSheet(onSuccess: onSuccess),
+        builder: (_) => Container(
+          constraints: const BoxConstraints(maxWidth: 420),
+          child: GoogleAccountPickerSheet(onSuccess: onSuccess),
+        ),
       );
     }
   }
@@ -54,57 +48,109 @@ class GoogleAccountPickerSheet extends StatefulWidget {
 }
 
 class _GoogleAccountPickerSheetState extends State<GoogleAccountPickerSheet> {
-  bool _showCustomInput = true;
-  final _customEmailController = TextEditingController();
-  final _customNameController = TextEditingController();
-
-  List<GoogleAccountItem> get _accounts {
-    final authController = Get.find<AuthController>();
-    final user = authController.userProfile;
-    if (user.email.isNotEmpty) {
-      return [
-        GoogleAccountItem(
-          name: user.name.isNotEmpty ? user.name : user.email.split('@')[0],
-          email: user.email,
-          avatarColor: const Color(0xFF1E88E5),
-        ),
-      ];
-    }
-    return const [];
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _customEmailController.addListener(_onEmailChanged);
-  }
-
-  void _onEmailChanged() {
-    final email = _customEmailController.text.trim();
-    if (email.contains('@') && _customNameController.text.isEmpty) {
-      final handle = email.split('@').first;
-      final parts = handle.split(RegExp(r'[._\-\d]+')).where((p) => p.isNotEmpty);
-      if (parts.isNotEmpty) {
-        final formatted = parts
-            .map((p) => p[0].toUpperCase() + (p.length > 1 ? p.substring(1).toLowerCase() : ''))
-            .join(' ');
-        _customNameController.text = formatted;
-      }
-    }
-  }
+  final _emailController = TextEditingController();
+  bool _isLoading = false;
 
   @override
   void dispose() {
-    _customEmailController.removeListener(_onEmailChanged);
-    _customEmailController.dispose();
-    _customNameController.dispose();
+    _emailController.dispose();
     super.dispose();
   }
 
-  Future<void> _signInWithNativeGoogle() async {
-    Navigator.of(context, rootNavigator: true).pop();
+  void _showTopAlert({
+    required String title,
+    required String message,
+    required bool isSuccess,
+  }) {
+    Get.rawSnackbar(
+      titleText: Text(
+        title,
+        style: GoogleFonts.montserrat(
+          fontWeight: FontWeight.w800,
+          color: Colors.white,
+          fontSize: 13.5,
+        ),
+      ),
+      messageText: Text(
+        message,
+        style: GoogleFonts.montserrat(
+          color: Colors.white70,
+          fontSize: 12,
+        ),
+      ),
+      icon: Icon(
+        isSuccess ? Icons.check_circle_outline : Icons.error_outline,
+        color: isSuccess ? const Color(0xFF4ADE80) : const Color(0xFFF87171),
+        size: 22,
+      ),
+      snackPosition: SnackPosition.TOP,
+      backgroundColor: const Color(0xFF1E1E24),
+      margin: const EdgeInsets.only(top: 18, left: 24, right: 24),
+      borderRadius: 12,
+      duration: const Duration(seconds: 3),
+      boxShadows: [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.25),
+          blurRadius: 16,
+          offset: const Offset(0, 4),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _handleNext() async {
+    final email = _emailController.text.trim();
+    if (email.isEmpty || !email.contains('@')) {
+      _showTopAlert(
+        title: 'Invalid Email',
+        message: 'Please enter a valid email address.',
+        isSuccess: false,
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
     final authController = Get.find<AuthController>();
-    authController.isLoading.value = true;
+    final handle = email.split('@').first;
+    final parts = handle.split(RegExp(r'[._\-\d]+')).where((p) => p.isNotEmpty);
+    final formattedName = parts.isNotEmpty
+        ? parts.map((p) => p[0].toUpperCase() + (p.length > 1 ? p.substring(1).toLowerCase() : '')).join(' ')
+        : handle;
+
+    final success = await authController.signInWithGoogle(
+      email: email,
+      name: formattedName,
+      googleId: 'email_${email.hashCode.abs()}',
+    );
+
+    if (!mounted) return;
+    setState(() => _isLoading = false);
+
+    if (success) {
+      Navigator.of(context, rootNavigator: true).pop();
+      _showTopAlert(
+        title: 'Signed In',
+        message: 'Welcome back, $formattedName!',
+        isSuccess: true,
+      );
+      if (widget.onSuccess != null) {
+        widget.onSuccess!();
+      }
+    } else {
+      _showTopAlert(
+        title: 'Sign In Failed',
+        message: authController.authMessage.value.isNotEmpty
+            ? authController.authMessage.value
+            : 'Could not sign in with this email.',
+        isSuccess: false,
+      );
+    }
+  }
+
+  Future<void> _handleGoogleSignIn() async {
+    setState(() => _isLoading = true);
+    final authController = Get.find<AuthController>();
+
     try {
       final googleSignIn = GoogleSignIn();
       final account = await googleSignIn.signIn();
@@ -115,119 +161,41 @@ class _GoogleAccountPickerSheetState extends State<GoogleAccountPickerSheet> {
           googleId: account.id,
           avatarUrl: account.photoUrl,
         );
+
+        if (!mounted) return;
+        setState(() => _isLoading = false);
+
         if (success) {
-          Get.rawSnackbar(
-            titleText: Text(
-              'Google Sign-In',
-              style: GoogleFonts.montserrat(fontWeight: FontWeight.w800, color: Colors.white, fontSize: 13.5),
-            ),
-            messageText: Text(
-              'Welcome, ${authController.userProfile.name}!',
-              style: GoogleFonts.montserrat(color: Colors.white70, fontSize: 12),
-            ),
-            icon: const Icon(Icons.check_circle_outline, color: Color(0xFF4ADE80), size: 22),
-            snackPosition: SnackPosition.TOP,
-            backgroundColor: const Color(0xFF1E1E24),
-            margin: const EdgeInsets.only(top: 18, left: 24, right: 24),
-            borderRadius: 12,
-            duration: const Duration(seconds: 3),
+          Navigator.of(context, rootNavigator: true).pop();
+          _showTopAlert(
+            title: 'Google Sign-In',
+            message: 'Welcome, ${authController.userProfile.name}!',
+            isSuccess: true,
           );
           if (widget.onSuccess != null) {
             widget.onSuccess!();
           }
+        } else {
+          _showTopAlert(
+            title: 'Google Sign-In Failed',
+            message: 'Could not complete Google Sign-In.',
+            isSuccess: false,
+          );
         }
+      } else {
+        if (!mounted) return;
+        setState(() => _isLoading = false);
       }
     } catch (e) {
-      debugPrint('Google Sign-In error: $e');
-    } finally {
-      authController.isLoading.value = false;
-    }
-  }
-
-  Future<void> _selectAccount(GoogleAccountItem account) async {
-    Navigator.of(context, rootNavigator: true).pop();
-
-    final authController = Get.find<AuthController>();
-    final success = await authController.signInWithGoogle(
-      email: account.email,
-      name: account.name,
-      googleId: 'g_${account.email.hashCode.abs()}',
-    );
-
-    if (success) {
-      Get.rawSnackbar(
-        titleText: Text(
-          'Google Sign-In',
-          style: GoogleFonts.montserrat(fontWeight: FontWeight.w800, color: Colors.white, fontSize: 13.5),
-        ),
-        messageText: Text(
-          'Signed in as ${account.name} (${account.email})',
-          style: GoogleFonts.montserrat(color: Colors.white70, fontSize: 12),
-        ),
-        icon: const Icon(Icons.check_circle_outline, color: Color(0xFF4ADE80), size: 22),
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: const Color(0xFF1E1E24),
-        margin: const EdgeInsets.only(top: 18, left: 24, right: 24),
-        borderRadius: 12,
-        duration: const Duration(seconds: 3),
-      );
-
-      if (widget.onSuccess != null) {
-        widget.onSuccess!();
-      }
-    } else {
-      Get.rawSnackbar(
-        titleText: Text(
-          'Google Sign-In Failed',
-          style: GoogleFonts.montserrat(fontWeight: FontWeight.w800, color: Colors.white, fontSize: 13.5),
-        ),
-        messageText: Text(
-          authController.authMessage.value.isNotEmpty
-              ? authController.authMessage.value
-              : 'Google Sign-In could not be completed.',
-          style: GoogleFonts.montserrat(color: Colors.white70, fontSize: 12),
-        ),
-        icon: const Icon(Icons.error_outline, color: Color(0xFFF87171), size: 22),
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: const Color(0xFF1E1E24),
-        margin: const EdgeInsets.only(top: 18, left: 24, right: 24),
-        borderRadius: 12,
-        duration: const Duration(seconds: 3),
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+      // Fallback: If native Google SignIn popup is blocked on browser, prompt user email
+      _showTopAlert(
+        title: 'Google Sign-In',
+        message: 'Please enter your Gmail above to continue.',
+        isSuccess: false,
       );
     }
-  }
-
-  Future<void> _submitCustomAccount() async {
-    final email = _customEmailController.text.trim();
-    final name = _customNameController.text.trim();
-
-    if (email.isEmpty || !email.contains('@')) {
-      Get.rawSnackbar(
-        titleText: Text(
-          'Invalid Gmail',
-          style: GoogleFonts.montserrat(fontWeight: FontWeight.w800, color: Colors.white, fontSize: 13.5),
-        ),
-        messageText: Text(
-          'Please enter a valid Google email address.',
-          style: GoogleFonts.montserrat(color: Colors.white70, fontSize: 12),
-        ),
-        icon: const Icon(Icons.error_outline, color: Color(0xFFF87171), size: 22),
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: const Color(0xFF1E1E24),
-        margin: const EdgeInsets.only(top: 18, left: 24, right: 24),
-        borderRadius: 12,
-        duration: const Duration(seconds: 3),
-      );
-      return;
-    }
-
-    final customAccount = GoogleAccountItem(
-      name: name.isNotEmpty ? name : email.split('@')[0],
-      email: email,
-      avatarColor: const Color(0xFF5E35B1),
-    );
-
-    await _selectAccount(customAccount);
   }
 
   @override
@@ -235,345 +203,174 @@ class _GoogleAccountPickerSheetState extends State<GoogleAccountPickerSheet> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.12),
-            blurRadius: 18,
-            offset: const Offset(0, 4),
+            color: Colors.black.withValues(alpha: 0.14),
+            blurRadius: 28,
+            offset: const Offset(0, 10),
           ),
         ],
       ),
       padding: EdgeInsets.only(
-        top: 18,
-        left: 18,
-        right: 18,
-        bottom: MediaQuery.of(context).viewInsets.bottom + 18,
+        top: 24,
+        left: 24,
+        right: 24,
+        bottom: MediaQuery.of(context).viewInsets.bottom + 24,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Header Row
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _googleLogo(),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Sign in with Google',
-                    style: GoogleFonts.roboto(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFF202124),
-                    ),
-                  ),
-                ],
+          // Top Close Row
+          Align(
+            alignment: Alignment.topRight,
+            child: InkWell(
+              onTap: () => Navigator.of(context, rootNavigator: true).pop(),
+              borderRadius: BorderRadius.circular(20),
+              child: Container(
+                padding: const EdgeInsets.all(4),
+                child: const Icon(Icons.close, size: 20, color: Color(0xFF94A3B8)),
               ),
-              IconButton(
-                icon: const Icon(Icons.close, color: Color(0xFF94A3B8), size: 20),
-                onPressed: () => Navigator.of(context, rootNavigator: true).pop(),
-                visualDensity: VisualDensity.compact,
-                padding: EdgeInsets.zero,
-              ),
-            ],
+            ),
           ),
-          const SizedBox(height: 2),
+
+          // 1. Title Typography (Matching Image 3)
+          Center(
+            child: Text(
+              'Sign In to Your Account',
+              style: GoogleFonts.montserrat(
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                color: const Color(0xFF1E293B),
+              ),
+            ),
+          ),
+          const SizedBox(height: 24),
+
+          // 2. Email Address Label
           Text(
-            'to continue to Stylito Fashion',
-            style: GoogleFonts.roboto(
-              fontSize: 12,
-              color: const Color(0xFF5F6368),
+            'Email Address',
+            style: GoogleFonts.montserrat(
+              fontSize: 13.5,
+              fontWeight: FontWeight.w700,
+              color: const Color(0xFF1E293B),
             ),
           ),
-          const SizedBox(height: 14),
-          // 1-Tap Native Android Google Account Selector
-          OutlinedButton.icon(
-            onPressed: _signInWithNativeGoogle,
-            icon: _googleLogo(),
-            label: Text(
-              'Sign In with Phone Google Account',
-              style: GoogleFonts.roboto(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFF1F1F1F),
-              ),
-            ),
-            style: OutlinedButton.styleFrom(
-              minimumSize: const Size(double.infinity, 46),
-              side: const BorderSide(color: Color(0xFF747775)),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-              backgroundColor: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 16),
-          const Divider(height: 1, color: Color(0xFFE0E0E0)),
           const SizedBox(height: 8),
 
-          // Accounts List
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxHeight: 260),
-            child: ListView.separated(
-              shrinkWrap: true,
-              physics: const ClampingScrollPhysics(),
-              itemCount: _accounts.length,
-              separatorBuilder: (context, index) => const Divider(
-                height: 1,
-                color: Color(0xFFF1F3F4),
-                indent: 56,
+          // 3. Email Input Field (Matching Image 3)
+          TextField(
+            controller: _emailController,
+            keyboardType: TextInputType.emailAddress,
+            decoration: InputDecoration(
+              hintText: 'Enter Your Email',
+              hintStyle: GoogleFonts.montserrat(
+                fontSize: 13.5,
+                color: const Color(0xFF94A3B8),
               ),
-              itemBuilder: (context, index) {
-                final account = _accounts[index];
-                return _accountTile(account);
-              },
+              filled: true,
+              fillColor: const Color(0xFFF8FAFC),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+              ),
             ),
+            onSubmitted: (_) => _handleNext(),
           ),
+          const SizedBox(height: 18),
 
-          const Divider(height: 1, color: Color(0xFFE0E0E0)),
+          // 4. Next Button (Stylito Landing Page Primary Color - Image 3)
+          ElevatedButton(
+            onPressed: _isLoading ? null : _handleNext,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              minimumSize: const Size(double.infinity, 48),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              elevation: 0,
+            ),
+            child: _isLoading
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                  )
+                : Text(
+                    'Next',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+          ),
+          const SizedBox(height: 18),
 
-          // "Use another account" button / input
-          if (!_showCustomInput) ...[
-            InkWell(
-              onTap: () {
-                setState(() => _showCustomInput = true);
-              },
-              borderRadius: BorderRadius.circular(8),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF1F3F4),
-                        shape: BoxShape.circle,
-                        border: Border.all(color: const Color(0xFFDADCE0)),
-                      ),
-                      child: const Icon(
-                        Icons.person_add_alt_1_outlined,
-                        color: Color(0xFF1A73E8),
-                        size: 20,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Text(
-                      'Use another account',
-                      style: GoogleFonts.roboto(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: const Color(0xFF202124),
-                      ),
-                    ),
-                  ],
+          // 5. "or" Divider (Matching Image 3)
+          Row(
+            children: [
+              const Expanded(child: Divider(color: Color(0xFFE2E8F0))),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 14),
+                child: Text(
+                  'or',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 13,
+                    color: const Color(0xFF94A3B8),
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
-            ),
-          ] else ...[
-            Padding(
-              padding: const EdgeInsets.only(top: 14),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Enter your Google Email',
-                    style: GoogleFonts.roboto(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFF5F6368),
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  TextField(
-                    controller: _customEmailController,
-                    keyboardType: TextInputType.emailAddress,
-                    autofocus: true,
-                    decoration: InputDecoration(
-                      hintText: 'e.g. yourname@gmail.com',
-                      prefixIcon: const Icon(Icons.email_outlined, size: 20),
-                      filled: true,
-                      fillColor: const Color(0xFFF8F9FA),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: const BorderSide(color: Color(0xFFDADCE0)),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: const BorderSide(color: Color(0xFF1A73E8), width: 1.5),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  TextField(
-                    controller: _customNameController,
-                    decoration: InputDecoration(
-                      hintText: 'Your Full Name (Optional)',
-                      prefixIcon: const Icon(Icons.badge_outlined, size: 20),
-                      filled: true,
-                      fillColor: const Color(0xFFF8F9FA),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: const BorderSide(color: Color(0xFFDADCE0)),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: const BorderSide(color: Color(0xFF1A73E8), width: 1.5),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: () {
-                          setState(() => _showCustomInput = false);
-                        },
-                        child: const Text('Cancel'),
-                      ),
-                      const SizedBox(width: 8),
-                      ElevatedButton(
-                        onPressed: _submitCustomAccount,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF1A73E8),
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: const Text('Continue'),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
+              const Expanded(child: Divider(color: Color(0xFFE2E8F0))),
+            ],
+          ),
+          const SizedBox(height: 18),
 
-          const SizedBox(height: 16),
-
-          // Google Disclaimer Footer
-          Text(
-            'To continue, Google will share your name, email address, and profile picture with Stylito. See Stylito’s Privacy Policy and Terms of Service.',
-            style: GoogleFonts.roboto(
-              fontSize: 11,
-              color: const Color(0xFF70757A),
-              height: 1.4,
+          // 6. Sign In with Google Pill Button (Matching Image 3)
+          OutlinedButton(
+            onPressed: _isLoading ? null : _handleGoogleSignIn,
+            style: OutlinedButton.styleFrom(
+              minimumSize: const Size(double.infinity, 48),
+              side: const BorderSide(color: Color(0xFFE2E8F0), width: 1.2),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+              backgroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'assets/images/google_logo.png',
+                  height: 20,
+                  errorBuilder: (context, error, stackTrace) => const Icon(
+                    Icons.g_mobiledata,
+                    color: Color(0xFFEA4335),
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Text(
+                  'Sign in with Google',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFF1E293B),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
       ),
     );
   }
-
-  Widget _accountTile(GoogleAccountItem account) {
-    return InkWell(
-      onTap: () => _selectAccount(account),
-      borderRadius: BorderRadius.circular(8),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-        child: Row(
-          children: [
-            // Circular Avatar with Letter
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: account.avatarColor,
-                shape: BoxShape.circle,
-              ),
-              child: Center(
-                child: Text(
-                  account.name.isNotEmpty ? account.name[0].toUpperCase() : 'U',
-                  style: GoogleFonts.roboto(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 18,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 14),
-
-            // Name & Email
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    account.name,
-                    style: GoogleFonts.roboto(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFF202124),
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    account.email,
-                    style: GoogleFonts.roboto(
-                      fontSize: 12,
-                      color: const Color(0xFF5F6368),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const Icon(Icons.arrow_forward_ios, size: 13, color: Color(0xFF9AA0A6)),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _googleLogo() {
-    return Container(
-      width: 24,
-      height: 24,
-      decoration: const BoxDecoration(shape: BoxShape.circle),
-      child: CustomPaint(painter: _GoogleIconPainter()),
-    );
-  }
-}
-
-class _GoogleIconPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final w = size.width;
-    final h = size.height;
-    final center = Offset(w / 2, h / 2);
-    final radius = w / 2;
-
-    // Red segment
-    final redPaint = Paint()..color = const Color(0xFFEA4335);
-    final bluePaint = Paint()..color = const Color(0xFF4285F4);
-    final yellowPaint = Paint()..color = const Color(0xFFFBBC05);
-    final greenPaint = Paint()..color = const Color(0xFF34A853);
-
-    // Simplified Google 4-Color 'G' representation
-    final rect = Rect.fromCircle(center: center, radius: radius);
-    canvas.drawArc(rect, -0.8, 1.6, true, redPaint);
-    canvas.drawArc(rect, 0.8, 1.5, true, yellowPaint);
-    canvas.drawArc(rect, 2.3, 1.4, true, greenPaint);
-    canvas.drawArc(rect, 3.7, 1.8, true, bluePaint);
-
-    // White inner cutout
-    final innerPaint = Paint()..color = Colors.white;
-    canvas.drawCircle(center, radius * 0.58, innerPaint);
-
-    // Blue horizontal bar
-    final barPaint = Paint()
-      ..color = const Color(0xFF4285F4)
-      ..strokeWidth = radius * 0.4
-      ..strokeCap = StrokeCap.square;
-    canvas.drawLine(Offset(center.dx, center.dy), Offset(w * 0.95, center.dy), barPaint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

@@ -34,7 +34,7 @@ class AuthController extends GetxController {
         return false;
       }
     } catch (e) {
-      authMessage.value = 'Network error during login: $e';
+      authMessage.value = 'Login failed. Please check your credentials.';
       return false;
     } finally {
       isLoading.value = false;
@@ -64,7 +64,7 @@ class AuthController extends GetxController {
         return false;
       }
     } catch (e) {
-      authMessage.value = 'Error during signup: $e';
+      authMessage.value = 'Registration could not be completed.';
       return false;
     } finally {
       isLoading.value = false;

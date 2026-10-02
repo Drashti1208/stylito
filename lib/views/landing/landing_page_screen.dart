@@ -9,6 +9,7 @@ import '../../controllers/wishlist_controller.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/utils/app_launcher.dart';
 import '../../models/product_model.dart';
+import '../profile/profile_screen.dart';
 import '../widgets/google_account_picker_sheet.dart';
 import '../widgets/phone_otp_dialog.dart';
 import '../widgets/play_store_download_dialog.dart';
@@ -26,7 +27,6 @@ class LandingPageScreen extends StatefulWidget {
 
 class _LandingPageScreenState extends State<LandingPageScreen> {
   final TextEditingController _searchController = TextEditingController();
-  final TextEditingController _newsletterController = TextEditingController();
   final TextEditingController _inquiryNameController = TextEditingController();
   final TextEditingController _inquiryEmailController = TextEditingController();
   final TextEditingController _inquirySubjectController = TextEditingController();
@@ -52,7 +52,7 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
       'title': 'Elevated Style.\nEveryday You.',
       'subtitle': 'Timeless pieces. Modern silhouettes. Designed to elevate your everyday.',
       'buttonText': 'SHOP NEW ARRIVALS',
-      'category': 'womens',
+      'category': 'ALL',
       'image': 'assets/images/hero_flatlay_pink_accessories_hd.jpg',
       'fallbackGradient': [Color(0xFFF9A8B6), Color(0xFFF83758)],
     },
@@ -264,7 +264,6 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
   @override
   void dispose() {
     _searchController.dispose();
-    _newsletterController.dispose();
     _inquiryNameController.dispose();
     _inquiryEmailController.dispose();
     _inquirySubjectController.dispose();
@@ -404,7 +403,12 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
                       title: 'My Profile',
                       onTap: () {
                         Navigator.pop(ctx);
-                        PlayStoreDownloadDialog.show(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const ProfileScreen(showBackButton: true),
+                          ),
+                        );
                       },
                     ),
                     _buildUserMenuItem(
@@ -528,14 +532,14 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
 
           Get.rawSnackbar(
             titleText: Text(
-              'Message Sent to Admin & Support',
+              'Your Message Has Been Sent!',
               style: GoogleFonts.montserrat(fontWeight: FontWeight.w800, color: Colors.white, fontSize: 13.5),
             ),
             messageText: Text(
-              'Thank you $name! Your inquiry has been stored in real-time and notified to the Admin. We will reach you at $email.',
+              'Thank you, $name! Your message has been sent successfully.',
               style: GoogleFonts.montserrat(color: Colors.white70, fontSize: 12),
             ),
-            icon: const Icon(Icons.mark_email_read_outlined, color: Color(0xFF4ADE80), size: 22),
+            icon: const Icon(Icons.check_circle_outline, color: Color(0xFF4ADE80), size: 22),
             snackPosition: SnackPosition.TOP,
             backgroundColor: const Color(0xFF1E1E24),
             margin: const EdgeInsets.only(top: 18, left: 24, right: 24),
@@ -573,46 +577,6 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
     }
   }
 
-  void _handleNewsletterSubscribe() {
-    final email = _newsletterController.text.trim();
-    if (email.isEmpty || !email.contains('@')) {
-      Get.rawSnackbar(
-        titleText: Text(
-          'Invalid Email',
-          style: GoogleFonts.montserrat(fontWeight: FontWeight.w800, color: Colors.white, fontSize: 13.5),
-        ),
-        messageText: Text(
-          'Please enter a valid email address to subscribe.',
-          style: GoogleFonts.montserrat(color: Colors.white70, fontSize: 12),
-        ),
-        icon: const Icon(Icons.error_outline, color: Color(0xFFF87171), size: 22),
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: const Color(0xFF1E1E24),
-        margin: const EdgeInsets.only(top: 18, left: 24, right: 24),
-        borderRadius: 12,
-        duration: const Duration(seconds: 3),
-      );
-      return;
-    }
-    _newsletterController.clear();
-    Get.rawSnackbar(
-      titleText: Text(
-        'Subscribed to VIP Drops!',
-        style: GoogleFonts.montserrat(fontWeight: FontWeight.w800, color: Colors.white, fontSize: 13.5),
-      ),
-      messageText: Text(
-        'Thank you! You will receive exclusive discounts at $email.',
-        style: GoogleFonts.montserrat(color: Colors.white70, fontSize: 12),
-      ),
-      icon: const Icon(Icons.check_circle_outline, color: Color(0xFF4ADE80), size: 22),
-      snackPosition: SnackPosition.TOP,
-      backgroundColor: const Color(0xFF1E1E24),
-      margin: const EdgeInsets.only(top: 18, left: 24, right: 24),
-      borderRadius: 12,
-      duration: const Duration(seconds: 3),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -631,7 +595,6 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
             KeyedSubtree(key: _newArrivalsKey, child: _buildFeaturedProducts(screenWidth)),
             _buildTrustStrip(screenWidth),
             KeyedSubtree(key: _promoSaleKey, child: _buildPromoSplitBanner(screenWidth)),
-            _buildNewsletterSection(screenWidth),
             KeyedSubtree(key: _contactKey, child: _buildContactSection(screenWidth)),
             _buildLuxuryFooter(screenWidth),
           ],
@@ -933,7 +896,9 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
   void _scrollToCategory(String slug) {
     setState(() {
       _selectedCategory = slug;
+      _activeNavTab = 'NEW IN';
     });
+    _scrollToKey(_newArrivalsKey, navTab: 'NEW IN');
   }
 
   // ==========================================
@@ -1272,7 +1237,9 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
       } else {
         _selectedCategory = slug;
       }
+      _activeNavTab = 'NEW IN';
     });
+    _scrollToKey(_newArrivalsKey, navTab: 'NEW IN');
   }
 
   // ==========================================
@@ -1835,147 +1802,6 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
                   ),
           ),
         ),
-      ),
-    );
-  }
-
-  // ==========================================
-  // 8. NEWSLETTER BOX
-  // ==========================================
-  Widget _buildNewsletterSection(double screenWidth) {
-    return Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 1280),
-        child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-          padding: const EdgeInsets.all(36),
-          decoration: BoxDecoration(
-            color: const Color(0xFFFFF0F2),
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: const Color(0xFFF7D8DE)),
-          ),
-          child: screenWidth > 800
-              ? Row(
-                  children: [
-                    Expanded(
-                      flex: 5,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              const Icon(Icons.mail_outline, color: AppColors.primary, size: 24),
-                              const SizedBox(width: 10),
-                              Text(
-                                'STAY IN THE KNOW',
-                                style: GoogleFonts.montserrat(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 1.0,
-                                  color: AppColors.textDark,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Subscribe to get special offers, free giveaways, and once-in-a-lifetime deals.',
-                            style: GoogleFonts.montserrat(
-                              fontSize: 13,
-                              color: AppColors.textMuted,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 24),
-                    Expanded(
-                      flex: 4,
-                      child: _buildNewsletterInputRow(),
-                    ),
-                  ],
-                )
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        const Icon(Icons.mail_outline, color: AppColors.primary, size: 24),
-                        const SizedBox(width: 10),
-                        Text(
-                          'STAY IN THE KNOW',
-                          style: GoogleFonts.montserrat(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.0,
-                            color: AppColors.textDark,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Subscribe to get special offers, free giveaways, and once-in-a-lifetime deals.',
-                      style: GoogleFonts.montserrat(
-                        fontSize: 13,
-                        color: AppColors.textMuted,
-                      ),
-                    ),
-                    const SizedBox(height: 18),
-                    _buildNewsletterInputRow(),
-                  ],
-                ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNewsletterInputRow() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(30),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.only(left: 18, right: 6, top: 4, bottom: 4),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              controller: _newsletterController,
-              decoration: InputDecoration(
-                hintText: 'Enter your email address',
-                hintStyle: GoogleFonts.montserrat(fontSize: 13, color: AppColors.textLight),
-                border: InputBorder.none,
-              ),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: _handleNewsletterSubscribe,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              foregroundColor: Colors.white,
-              minimumSize: const Size(0, 40),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-              elevation: 0,
-            ),
-            child: Text(
-              'SUBSCRIBE',
-              style: GoogleFonts.montserrat(
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 0.8,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -2914,17 +2740,25 @@ class _StylishAuthModalState extends State<_StylishAuthModal> {
         Get.rawSnackbar(
           titleText: Text(
             'Login Failed',
-            style: GoogleFonts.montserrat(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 13.5),
+            style: GoogleFonts.montserrat(fontWeight: FontWeight.w800, color: Colors.white, fontSize: 13.5),
           ),
           messageText: Text(
-            auth.authMessage.value.isNotEmpty ? auth.authMessage.value : 'Invalid credentials',
+            auth.authMessage.value.isNotEmpty ? auth.authMessage.value : 'Invalid credentials. Please try again.',
             style: GoogleFonts.montserrat(color: Colors.white70, fontSize: 12),
           ),
+          icon: const Icon(Icons.error_outline, color: Color(0xFFF87171), size: 22),
           snackPosition: SnackPosition.TOP,
-          backgroundColor: Colors.redAccent,
+          backgroundColor: const Color(0xFF1E1E24),
           margin: const EdgeInsets.only(top: 18, left: 24, right: 24),
           borderRadius: 12,
-          duration: const Duration(seconds: 2),
+          duration: const Duration(seconds: 3),
+          boxShadows: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.25),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
+            ),
+          ],
         );
       }
     }
@@ -2943,33 +2777,49 @@ class _StylishAuthModalState extends State<_StylishAuthModal> {
         Get.rawSnackbar(
           titleText: Text(
             'Account Created!',
-            style: GoogleFonts.montserrat(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 13.5),
+            style: GoogleFonts.montserrat(fontWeight: FontWeight.w800, color: Colors.white, fontSize: 13.5),
           ),
           messageText: Text(
             'Welcome to Stylito, $name!',
             style: GoogleFonts.montserrat(color: Colors.white70, fontSize: 12),
           ),
+          icon: const Icon(Icons.check_circle_outline, color: Color(0xFF4ADE80), size: 22),
           snackPosition: SnackPosition.TOP,
           backgroundColor: const Color(0xFF1E1E24),
           margin: const EdgeInsets.only(top: 18, left: 24, right: 24),
           borderRadius: 12,
-          duration: const Duration(seconds: 2),
+          duration: const Duration(seconds: 3),
+          boxShadows: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.25),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
+            ),
+          ],
         );
       } else {
         Get.rawSnackbar(
           titleText: Text(
             'Registration Failed',
-            style: GoogleFonts.montserrat(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 13.5),
+            style: GoogleFonts.montserrat(fontWeight: FontWeight.w800, color: Colors.white, fontSize: 13.5),
           ),
           messageText: Text(
-            auth.authMessage.value.isNotEmpty ? auth.authMessage.value : 'Could not register',
+            auth.authMessage.value.isNotEmpty ? auth.authMessage.value : 'Please check your details and try again.',
             style: GoogleFonts.montserrat(color: Colors.white70, fontSize: 12),
           ),
+          icon: const Icon(Icons.error_outline, color: Color(0xFFF87171), size: 22),
           snackPosition: SnackPosition.TOP,
-          backgroundColor: Colors.redAccent,
+          backgroundColor: const Color(0xFF1E1E24),
           margin: const EdgeInsets.only(top: 18, left: 24, right: 24),
           borderRadius: 12,
-          duration: const Duration(seconds: 2),
+          duration: const Duration(seconds: 3),
+          boxShadows: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.25),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
+            ),
+          ],
         );
       }
     }

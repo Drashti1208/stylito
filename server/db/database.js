@@ -75,8 +75,9 @@ async function initDatabase() {
   try { await run(`ALTER TABLE users ADD COLUMN phone TEXT DEFAULT ''`); } catch (_) {}
   try { await run(`ALTER TABLE users ADD COLUMN google_id TEXT DEFAULT ''`); } catch (_) {}
   try { await run(`ALTER TABLE users ADD COLUMN avatar_url TEXT DEFAULT ''`); } catch (_) {}
+  try { await run(`ALTER TABLE users ADD COLUMN phone_verified INTEGER DEFAULT 0`); } catch (_) {}
 
-  // 1b. OTPs Table (Real-time OTP storage without Firebase)
+  // 1b. OTPs Table (Real-time OTP storage with attempts tracking)
   await run(`
     CREATE TABLE IF NOT EXISTS otps (
       id TEXT PRIMARY KEY,
@@ -84,6 +85,33 @@ async function initDatabase() {
       code TEXT NOT NULL,
       expires_at DATETIME NOT NULL,
       is_used INTEGER DEFAULT 0,
+      attempts INTEGER DEFAULT 0,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+  try { await run(`ALTER TABLE otps ADD COLUMN attempts INTEGER DEFAULT 0`); } catch (_) {}
+
+  // 1c. Web Push Subscriptions Table
+  await run(`
+    CREATE TABLE IF NOT EXISTS push_subscriptions (
+      id TEXT PRIMARY KEY,
+      user_id TEXT,
+      endpoint TEXT UNIQUE NOT NULL,
+      keys_p256dh TEXT NOT NULL,
+      keys_auth TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  // 1d. In-App / System Notifications Table
+  await run(`
+    CREATE TABLE IF NOT EXISTS notifications (
+      id TEXT PRIMARY KEY,
+      user_id TEXT,
+      title TEXT NOT NULL,
+      body TEXT NOT NULL,
+      type TEXT DEFAULT 'general',
+      is_read INTEGER DEFAULT 0,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `);

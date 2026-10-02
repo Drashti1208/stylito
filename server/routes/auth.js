@@ -132,8 +132,11 @@ router.post('/send-otp', async (req, res) => {
     console.log(`   OTP Code:    ${otpCode}`);
     console.log(`   Valid For:   10 Minutes`);
 
-    // Optional Real SMS Carrier Dispatch via Fast2SMS (Indian Mobile Carrier SMS)
+    // Real SMS Carrier Dispatch (Fast2SMS, Twilio, MSG91)
     let realSmsSent = false;
+    let smsProviderUsed = 'Simulated/SQLite';
+
+    // 1. Fast2SMS Provider (India)
     if (process.env.FAST2SMS_API_KEY) {
       const rawDigits = cleanedContact.replace(/[^0-9]/g, '').slice(-10);
       try {
@@ -150,22 +153,57 @@ router.post('/send-otp', async (req, res) => {
           })
         });
         const smsData = await smsRes.json();
-        console.log(`📡 Real SMS Gateway Dispatch Response:`, smsData);
-        realSmsSent = smsData.return === true;
+        console.log(`📡 Fast2SMS Gateway Response:`, smsData);
+        if (smsData.return === true) {
+          realSmsSent = true;
+          smsProviderUsed = 'Fast2SMS';
+        }
       } catch (smsErr) {
-        console.warn('⚠️ Real SMS Gateway dispatch warning:', smsErr.message);
+        console.warn('⚠️ Fast2SMS dispatch warning:', smsErr.message);
+      }
+    }
+    // 2. Twilio SMS Provider (Global)
+    else if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_PHONE_NUMBER) {
+      try {
+        const formattedPhone = cleanedContact.startsWith('+') ? cleanedContact : `+91${cleanedContact.replace(/[^0-9]/g, '').slice(-10)}`;
+        const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${process.env.TWILIO_ACCOUNT_SID}/Messages.json`;
+        const authHeader = 'Basic ' + Buffer.from(`${process.env.TWILIO_ACCOUNT_SID}:${process.env.TWILIO_AUTH_TOKEN}`).toString('base64');
+
+        const params = new URLSearchParams();
+        params.append('To', formattedPhone);
+        params.append('From', process.env.TWILIO_PHONE_NUMBER);
+        params.append('Body', `Your Stylito verification code is ${otpCode}. Valid for 10 minutes.`);
+
+        const twilioRes = await fetch(twilioUrl, {
+          method: 'POST',
+          headers: {
+            'Authorization': authHeader,
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: params.toString()
+        });
+        const twilioData = await twilioRes.json();
+        console.log(`📡 Twilio Gateway Response:`, twilioData.status || twilioData.message);
+        if (twilioRes.ok && (twilioData.status === 'queued' || twilioData.status === 'sent')) {
+          realSmsSent = true;
+          smsProviderUsed = 'Twilio';
+        }
+      } catch (twErr) {
+        console.warn('⚠️ Twilio SMS dispatch warning:', twErr.message);
       }
     }
 
+    console.log(`   SMS Dispatch Status: ${realSmsSent ? 'SENT via ' + smsProviderUsed : 'Local Dev Mode'}`);
     console.log(`===============================================`);
 
     res.json({
       success: true,
       message: realSmsSent
-        ? `Real SMS OTP sent to your phone number ${cleanedContact}!`
-        : `OTP generated and sent to ${cleanedContact}`,
+        ? `Real SMS OTP sent to ${cleanedContact} via ${smsProviderUsed}!`
+        : `OTP generated for ${cleanedContact}`,
       otp: otpCode,
-      realSmsSent
+      realSmsSent,
+      provider: smsProviderUsed
     });
   } catch (err) {
     console.error('Send OTP error:', err);
@@ -218,12 +256,14 @@ router.post('/verify-otp', async (req, res) => {
       const userPhone = isEmail ? '' : cleanedContact;
 
       await run(`
-        INSERT INTO users (id, name, email, password_hash, phone)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO users (id, name, email, password_hash, phone, phone_verified)
+        VALUES (?, ?, ?, ?, ?, 1)
       `, [id, userName, userEmail, randomPassword, userPhone]);
 
-      user = await get('SELECT id, name, email, phone, avatar_url, pincode, address, city, state, country, bank_account_number, account_holder_name, ifsc_code, created_at FROM users WHERE id = ?', [id]);
+      user = await get('SELECT id, name, email, phone, phone_verified, avatar_url, pincode, address, city, state, country, bank_account_number, account_holder_name, ifsc_code, created_at FROM users WHERE id = ?', [id]);
     } else {
+      await run('UPDATE users SET phone_verified = 1 WHERE id = ?', [user.id]);
+      user.phone_verified = 1;
       delete user.password_hash;
     }
 
