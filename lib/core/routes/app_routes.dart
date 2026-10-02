@@ -13,6 +13,7 @@ import '../../views/catalog/kids_products_screen.dart';
 import '../../views/catalog/mens_products_screen.dart';
 import '../../views/catalog/trending_products_screen.dart';
 import '../../views/catalog/womens_products_screen.dart';
+import '../../views/landing/contact_support_screen.dart';
 import '../../views/landing/landing_page_screen.dart';
 import '../../views/main_navigation_screen.dart';
 import '../../views/onboarding/get_started_screen.dart';
@@ -25,6 +26,7 @@ class AppRoutes {
   static const String root = '/';
   static const String splash = '/splash';
   static const String landing = '/landing';
+  static const String contactSupport = '/contact-support';
   static const String onboarding = '/onboarding';
   static const String getStarted = '/get-started';
   static const String signIn = '/signin';
@@ -49,6 +51,7 @@ class AppRoutes {
         root: (context) => const AppPlatformRouter(),
         splash: (context) => const SplashScreen(),
         landing: (context) => const LandingPageScreen(),
+        contactSupport: (context) => const ContactSupportScreen(),
         onboarding: (context) => const OnboardingScreen(),
         getStarted: (context) => const GetStartedScreen(),
         signIn: (context) => const SignInScreen(),

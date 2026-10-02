@@ -9,7 +9,9 @@ import '../../controllers/wishlist_controller.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/utils/app_launcher.dart';
 import '../../models/product_model.dart';
+import '../catalog/flat_and_heels_screen.dart';
 import '../profile/profile_screen.dart';
+import 'contact_support_screen.dart';
 import '../widgets/google_account_picker_sheet.dart';
 import '../widgets/phone_otp_dialog.dart';
 import '../widgets/play_store_download_dialog.dart';
@@ -1082,7 +1084,15 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
                       // White Pill Button
                       ElevatedButton(
                         onPressed: () {
-                          _scrollToCategory(banner['category']);
+                          final cat = banner['category'] as String? ?? 'ALL';
+                          if (cat == 'flat-and-heels' || cat == 'heels' || cat == 'flats') {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => const FlatAndHeelsScreen()),
+                            );
+                          } else {
+                            _scrollToCategory(cat);
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
@@ -1605,16 +1615,16 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
   Widget _buildContactSection(double screenWidth) {
     return Center(
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 1280),
+        constraints: const BoxConstraints(maxWidth: 1040),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 32),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
                 'HAVE QUESTIONS?',
                 style: GoogleFonts.montserrat(
-                  fontSize: 13,
+                  fontSize: 12,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 2.0,
                   color: AppColors.primary,
@@ -1624,25 +1634,25 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
               Text(
                 'Get in Touch with Stylish Support',
                 style: GoogleFonts.playfairDisplay(
-                  fontSize: 26,
+                  fontSize: 22,
                   fontWeight: FontWeight.bold,
                   color: AppColors.textDark,
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 18),
               screenWidth > 850
                   ? Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(flex: 4, child: _buildContactCards()),
-                        const SizedBox(width: 32),
+                        const SizedBox(width: 24),
                         Expanded(flex: 6, child: _buildInquiryForm()),
                       ],
                     )
                   : Column(
                       children: [
                         _buildContactCards(),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 18),
                         _buildInquiryForm(),
                       ],
                     ),
@@ -1661,26 +1671,44 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
           'Email Us',
           'support@stylito.com',
           'Direct mail support 24/7',
-          () => AppLauncher.launchEmail(
-            email: 'support@stylito.com',
-            subject: 'Customer Inquiry',
-          ),
+          () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const ContactSupportScreen(initialSection: 'email'),
+              ),
+            );
+          },
         ),
-        const SizedBox(height: 14),
+        const SizedBox(height: 10),
         _buildInfoTile(
           Icons.phone_outlined,
           'Call Support',
           '+91 98765 43210',
           'Mon - Sat: 9:00 AM - 8:00 PM IST',
-          () => AppLauncher.launchPhone('+919876543210'),
+          () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const ContactSupportScreen(initialSection: 'phone'),
+              ),
+            );
+          },
         ),
-        const SizedBox(height: 14),
+        const SizedBox(height: 10),
         _buildInfoTile(
           Icons.location_on_outlined,
           'Headquarters',
           'Surat, Gujarat, India',
           'Fashion Hub, Stylito Towers, 395007',
-          null,
+          () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const ContactSupportScreen(),
+              ),
+            );
+          },
         ),
       ],
     );
@@ -1689,26 +1717,26 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
   Widget _buildInfoTile(IconData icon, String title, String val, String subtitle, VoidCallback? onTap) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(14),
       child: Container(
-        padding: const EdgeInsets.all(18),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(14),
           border: Border.all(color: const Color(0xFFF7D8DE)),
         ),
         child: Row(
           children: [
             Container(
-              width: 44,
-              height: 44,
+              width: 38,
+              height: 38,
               decoration: BoxDecoration(
                 color: const Color(0xFFFFF0F2),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(icon, color: AppColors.primary, size: 22),
+              child: Icon(icon, color: AppColors.primary, size: 19),
             ),
-            const SizedBox(width: 14),
+            const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1716,7 +1744,7 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
                   Text(
                     title,
                     style: GoogleFonts.montserrat(
-                      fontSize: 12,
+                      fontSize: 11,
                       fontWeight: FontWeight.bold,
                       color: AppColors.textLight,
                     ),
@@ -1724,7 +1752,7 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
                   Text(
                     val,
                     style: GoogleFonts.montserrat(
-                      fontSize: 14,
+                      fontSize: 13,
                       fontWeight: FontWeight.bold,
                       color: AppColors.textDark,
                     ),
@@ -1732,7 +1760,7 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
                   Text(
                     subtitle,
                     style: GoogleFonts.montserrat(
-                      fontSize: 11,
+                      fontSize: 10.5,
                       color: AppColors.textMuted,
                     ),
                   ),
@@ -1740,7 +1768,7 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
               ),
             ),
             if (onTap != null)
-              const Icon(Icons.arrow_forward_ios, size: 14, color: AppColors.primary),
+              const Icon(Icons.arrow_forward_ios, size: 12, color: AppColors.primary),
           ],
         ),
       ),
@@ -1751,16 +1779,16 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
     final inquiryCtrl = Get.find<InquiryController>();
 
     return Container(
-      padding: const EdgeInsets.all(28),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: const Color(0xFFF7D8DE)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
           ),
         ],
       ),
@@ -1772,76 +1800,93 @@ class _LandingPageScreenState extends State<LandingPageScreen> {
             Text(
               'Send us a Direct Message',
               style: GoogleFonts.montserrat(
-                fontSize: 16,
+                fontSize: 14.5,
                 fontWeight: FontWeight.bold,
                 color: AppColors.textDark,
               ),
             ),
-            const SizedBox(height: 18),
+            const SizedBox(height: 14),
             Row(
               children: [
                 Expanded(
                   child: TextFormField(
                     controller: _inquiryNameController,
+                    style: GoogleFonts.montserrat(fontSize: 12.5),
                     decoration: InputDecoration(
                       labelText: 'Your Name',
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                      labelStyle: GoogleFonts.montserrat(fontSize: 12),
+                      isDense: true,
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                     ),
                     validator: (v) => v == null || v.isEmpty ? 'Please enter name' : null,
                   ),
                 ),
-                const SizedBox(width: 14),
+                const SizedBox(width: 10),
                 Expanded(
                   child: TextFormField(
                     controller: _inquiryEmailController,
+                    style: GoogleFonts.montserrat(fontSize: 12.5),
                     decoration: InputDecoration(
                       labelText: 'Your Email',
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                      labelStyle: GoogleFonts.montserrat(fontSize: 12),
+                      isDense: true,
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                     ),
                     validator: (v) => v == null || !v.contains('@') ? 'Enter valid email' : null,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 10),
             TextFormField(
               controller: _inquirySubjectController,
+              style: GoogleFonts.montserrat(fontSize: 12.5),
               decoration: InputDecoration(
                 labelText: 'Subject',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                labelStyle: GoogleFonts.montserrat(fontSize: 12),
+                isDense: true,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
               ),
               validator: (v) => v == null || v.isEmpty ? 'Please enter subject' : null,
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 10),
             TextFormField(
               controller: _inquiryMessageController,
-              maxLines: 4,
+              maxLines: 3,
+              style: GoogleFonts.montserrat(fontSize: 12.5),
               decoration: InputDecoration(
                 labelText: 'How can we help you?',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                labelStyle: GoogleFonts.montserrat(fontSize: 12),
+                isDense: true,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
               ),
               validator: (v) => v == null || v.length < 5 ? 'Message is too short' : null,
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 14),
             Obx(() => ElevatedButton.icon(
               onPressed: inquiryCtrl.isSubmitting.value ? null : _submitInquiry,
               icon: inquiryCtrl.isSubmitting.value
                   ? const SizedBox(
-                      width: 18,
-                      height: 18,
+                      width: 16,
+                      height: 16,
                       child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
                     )
-                  : const Icon(Icons.send, size: 18),
+                  : const Icon(Icons.send, size: 15),
               label: Text(
                 inquiryCtrl.isSubmitting.value ? 'Sending...' : 'Send Message',
-                style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.bold),
+                style: GoogleFonts.montserrat(fontSize: 12.5, fontWeight: FontWeight.bold),
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
-                minimumSize: const Size(0, 48),
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                minimumSize: const Size(0, 40),
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                elevation: 1,
               ),
             )),
           ],

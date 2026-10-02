@@ -5,6 +5,7 @@ import '../../core/constants/app_text_styles.dart';
 import '../../core/routes/app_routes.dart';
 import '../../models/category_model.dart';
 import '../../models/product_model.dart';
+import '../catalog/flat_and_heels_screen.dart';
 import '../widgets/app_drawer.dart';
 import 'widgets/banner_carousel.dart';
 import 'widgets/category_item.dart';
@@ -216,7 +217,10 @@ class HomeScreen extends StatelessWidget {
             // Flat and Heels promo card matching Figma exactly - Opens dynamic Flat & Heels page
             InkWell(
               onTap: () {
-                Navigator.pushNamed(context, AppRoutes.flatAndHeels);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const FlatAndHeelsScreen()),
+                );
               },
               borderRadius: BorderRadius.circular(10),
               child: Container(
@@ -457,7 +461,10 @@ class HomeScreen extends StatelessWidget {
             // Sponsored Card - Up to 50% OFF - Opens Flat and Heels page
             GestureDetector(
               onTap: () {
-                Navigator.pushNamed(context, AppRoutes.flatAndHeels);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const FlatAndHeelsScreen()),
+                );
               },
               child: Container(
                 margin: const EdgeInsets.symmetric(horizontal: 16),

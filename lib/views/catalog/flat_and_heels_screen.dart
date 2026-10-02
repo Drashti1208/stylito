@@ -208,14 +208,13 @@ class _FlatAndHeelsScreenState extends State<FlatAndHeelsScreen> {
     final cartProvider = Get.find<CartController>();
     final wishlistProvider = Get.find<WishlistController>();
 
-    return Obx(() {
-      final displayedList = _filteredProducts;
+    final displayedList = _filteredProducts;
 
-      final heelsCount = _products.where((p) => p.category.toLowerCase() == 'heels').length;
-      final flatsCount = _products.where((p) => p.category.toLowerCase() == 'flats').length;
-      final userAddedCount = _userAddedIds.length;
+    final heelsCount = _products.where((p) => p.category.toLowerCase() == 'heels').length;
+    final flatsCount = _products.where((p) => p.category.toLowerCase() == 'flats').length;
+    final userAddedCount = _userAddedIds.length;
 
-      return Scaffold(
+    return Scaffold(
       backgroundColor: const Color(0xFFF9F9F9),
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -475,7 +474,6 @@ class _FlatAndHeelsScreenState extends State<FlatAndHeelsScreen> {
         ),
       ),
     );
-    });
   }
 
 

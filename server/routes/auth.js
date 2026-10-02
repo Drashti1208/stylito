@@ -137,7 +137,7 @@ router.post('/send-otp', async (req, res) => {
     let smsProviderUsed = 'Simulated/SQLite';
 
     // 1. Twilio SMS Provider (Global)
-    else if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_PHONE_NUMBER) {
+    if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_PHONE_NUMBER) {
       try {
         const formattedPhone = cleanedContact.startsWith('+') ? cleanedContact : `+91${cleanedContact.replace(/[^0-9]/g, '').slice(-10)}`;
         const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${process.env.TWILIO_ACCOUNT_SID}/Messages.json`;

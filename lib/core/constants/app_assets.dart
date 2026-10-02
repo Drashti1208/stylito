@@ -8,6 +8,7 @@ class AppAssets {
   // Branding & System
   static const String logo = '$imagesDir/logo.png';
   static const String logoHeader = '$imagesDir/logo_header.png';
+  static const String appLogoMark = '$imagesDir/app_logo_mark.png';
   static const String userAvatar = '$imagesDir/user_avatar.png';
   static const String getStartedBg = '$imagesDir/get_started_bg.png';
 
